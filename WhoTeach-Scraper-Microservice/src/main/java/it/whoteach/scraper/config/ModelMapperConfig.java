@@ -52,43 +52,42 @@ public class ModelMapperConfig {
 		if(context.getSource().getKeywords() != null) { 
 			article.setKeywords(context.getSource().getKeywords());
 		}
-		if(context.getSource().getDuration() != null) { 
+		if(context.getSource().getDuration().getDuration() != null) { 
 			article.setDuration(context.getSource().getDuration());
 		}
-		if(context.getSource().getDifficulty() != null) { 
+		if(context.getSource().getDifficulty().getDifficulty() != null) { 
 			article.setDifficulty(context.getSource().getDifficulty());
 		}
-		if(context.getSource().getDomain() != null) { 
+		if(context.getSource().getDomain().getDomain() != null) { 
 			article.setDomain(context.getSource().getDomain());
 		}
-		if(context.getSource().getSubsubdomain() != null) { 
+		if(context.getSource().getSubsubdomain().getSubsubdomain() != null) { 
 			article.setSubsubdomain(context.getSource().getSubsubdomain());
 		}
-		if(context.getSource().getMaxAge() != null) { 
+		if(context.getSource().getMaxAge().getMaxAge() != null) { 
 			article.setMaxAge(context.getSource().getMaxAge());
 		}
-		if(context.getSource().getMinAge() != null) { 
+		if(context.getSource().getMinAge().getMinAge() != null) { 
 			article.setMinAge(context.getSource().getMinAge());
 		}
-		if(context.getSource().getUploadDate() != null) { 
+		if(context.getSource().getUploadDate().getUploadDate() != null) { 
 			article.setUploadDate(context.getSource().getUploadDate());
 		}
-		if(context.getSource().getLanguage() != null) { 
+		if(context.getSource().getLanguage().getLanguage() != null) { 
 			article.setLanguage(context.getSource().getLanguage());
 		}
-		if(context.getSource().getDescription() != null) { 
+		if(context.getSource().getDescription().getDescription() != null) { 
 			article.setDescription(context.getSource().getDescription());
 		}
-		if(context.getSource().getType() != null) { 
+		if(context.getSource().getType().getType() != null) { 
 			article.setType(context.getSource().getType());
 		}
-		if(context.getSource().getTitle() != null) { 
+		if(context.getSource().getTitle().getTitle() != null) { 
 			article.setTitle(context.getSource().getTitle());
 		}
-		if(context.getSource().getFormat() != null) { 
+		if(context.getSource().getFormat().getFormat() != null) { 
 			article.setFormat(context.getSource().getFormat());
 		}
-		
 		return article;
 	};
 

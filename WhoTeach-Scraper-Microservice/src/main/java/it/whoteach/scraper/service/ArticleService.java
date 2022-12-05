@@ -26,20 +26,15 @@ public class ArticleService {
 	}
 
 	public Article save(Article article) {
-		articleRepository.save(article);
-		return article;
+		return articleRepository.save(article);
 	}
 
-	public List<Article> saveAll(ModelMapper modelMapper,List<ArticleDTO> articles) {
-		List<Article> list = new ArrayList<>();
-		for(ArticleDTO a : articles) {
-			list.add(save(modelMapper.map(a, Article.class)));
-		}
-		return list;
+	public List<Article> saveAll(List<Article> articles) {
+		return articleRepository.saveAll(articles);
 	}
 
 	public Article update(Article article) {
-		return articleRepository.save(article);
+		return save(article);
 	}
 
 	public List<Article> findAll() {
@@ -52,15 +47,15 @@ public class ArticleService {
 	}
 
 	public void clearById(Long id) {
-		articleRepository.clearById(id);
-		clearAlone();
+		articleRepository.deleteById(id);
+		deleteAlone();
 	}
 
-	public void clearAlone() {
-		articleRepository.clearAlone();
+	public void deleteAlone() {
+		articleRepository.deleteAlone();
 	}
 
 	public void clearDatabase() {
-		articleRepository.clearDatabase();
+		articleRepository.deleteAll();
 	}
 }
