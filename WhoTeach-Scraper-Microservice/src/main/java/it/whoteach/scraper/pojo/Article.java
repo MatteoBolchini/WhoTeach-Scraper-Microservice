@@ -2,20 +2,24 @@ package it.whoteach.scraper.pojo;
 
 import java.util.List;
 
+import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Node
 @Getter
 @Setter
+@NoArgsConstructor
 public class Article {
 	@Id
-	private String idItem;
+	@GeneratedValue
+	private Long id;
 	private String url;
 	private String source;
 	
@@ -66,11 +70,5 @@ public class Article {
 	
 	@Relationship(type = "HAS_KEYWORDS")
 	public List<Keyword> keywords;
-	
-	public Article(String idItem, String url, String source) {
-		this.idItem = idItem;
-		this.url = url;
-		this.source = source;
-	}
 	
 }

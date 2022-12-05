@@ -3,6 +3,7 @@ package it.whoteach.scraper.config;
 import java.io.FileReader;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ import it.whoteach.scraper.pojo.Type;
 import it.whoteach.scraper.pojo.UploadDate;
 import it.whoteach.scraper.repository.ArticleRepository;
 
-@Configuration
+//@Configuration
 public class LoadDatabase {
 	
 	@Autowired
@@ -62,8 +63,11 @@ public class LoadDatabase {
 			String[] row;
 			System.out.println("Scansione iniziata: " + LocalTime.now());
 			
-			while((row = csvReader.readNext()) != null  && i != 100) { //  && i != 5000
-				Article article = new Article(row[0], row[1], row[15]);
+			while((row = csvReader.readNext()) != null  && i != 20) { //  && i != 5000
+				// manca controllo idItem url source
+				Article article = new Article();
+				article.setSource(row[15]);
+				article.setUrl(row[1]);
 				// crea la lista degli autori
 				String[] authors = row[7].split(",");
 				List<Author> list1 = new ArrayList<>();
@@ -83,24 +87,92 @@ public class LoadDatabase {
 					list3.add(new DestinationPublic(destinations[l]));
 				}
 				// crea la lista dei subdomain
-				String[] subdomains = row[17].split("/");
+				String[] subdomains = row[17].split(",");
 				List<Subdomain> list4 = new ArrayList<>();
 				for(int m = 0;m < subdomains.length;m++) {
 					list4.add(new Subdomain(subdomains[m]));
 				}
 				// aggiunge i dati
 				article.setAuthors(list1);
-				article.setDescription(new Description(row[4]));
+				article.setKeywords(list2);
 				article.setDestinationPublic(list3);
+				article.setSubdomain(list4);
+				article.setDescription(new Description(row[4]));
 				article.setDifficulty(new Difficulty(row[9]));
 				article.setDomain(new Domain(row[16]));
 				article.setDuration(new Duration(row[11]));
 				article.setFormat(new Format(row[10]));
-				article.setKeywords(list2);
 				article.setLanguage(new Language(row[8]));
 				article.setMaxAge(new MaxAge(row[14]));
 				article.setMinAge(new MinAge(row[13]));
+				article.setSubsubdomain(new Subsubdomain(row[18]));
+				article.setTitle(new Title(row[3]));
+				article.setType(new Type(row[5]));
+				article.setUploadDate(new UploadDate(row[6]));
+				i++;
+				articleRepository.save(article);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("SCANSIONE EFFETTUATA: " + LocalTime.now());
+	}
+	
+	public static void csvToArticle2(ArticleRepository articleRepository) {
+		int i = 0; // contatore per i test
+		try {
+			FileReader fileReader = new FileReader("src/main/resources/MERLOT_NER.csv");
+			CSVParser parser = new CSVParserBuilder()
+					.withSeparator(';')
+					.withIgnoreQuotations(false)
+					.build();
+			CSVReader csvReader = new CSVReaderBuilder(fileReader)
+					.withSkipLines(1)
+					.withCSVParser(parser)
+					.build();
+			String[] row;
+			System.out.println("Scansione iniziata: " + LocalTime.now());
+			
+			while((row = csvReader.readNext()) != null  && i != 100) { //  && i != 5000
+				// manca controllo idItem url source
+				Article article = new Article();
+				// crea la lista degli autori
+				String[] authors = row[7].split(",");
+				List<Author> list1 = new ArrayList<>();
+				for(int j = 0;j < authors.length;j++) {
+					list1.add(new Author(authors[j]));
+				}
+				// crea la lista delle keywords
+				String[] keywords = row[2].split(",");
+				List<Keyword> list2 = new ArrayList<>();
+				for(int k = 0;k < keywords.length;k++) {
+					list2.add(new Keyword(keywords[k]));
+				}
+				// crea la lista delle destination public
+				String[] destinations = row[12].split(",");
+				List<DestinationPublic> list3 = new ArrayList<>();
+				for(int l = 0;l < destinations.length;l++) {
+					list3.add(new DestinationPublic(destinations[l]));
+				}
+				// crea la lista dei subdomain
+				String[] subdomains = row[17].split(",");
+				List<Subdomain> list4 = new ArrayList<>();
+				for(int m = 0;m < subdomains.length;m++) {
+					list4.add(new Subdomain(subdomains[m]));
+				}
+				// aggiunge i dati
+				article.setAuthors(list1);
+				article.setKeywords(list2);
+				article.setDestinationPublic(list3);
 				article.setSubdomain(list4);
+				article.setDescription(new Description(row[4]));
+				article.setDifficulty(new Difficulty(row[9]));
+				article.setDomain(new Domain(row[16]));
+				article.setDuration(new Duration(row[11]));
+				article.setFormat(new Format(row[10]));
+				article.setLanguage(new Language(row[8]));
+				article.setMaxAge(new MaxAge(row[14]));
+				article.setMinAge(new MinAge(row[13]));
 				article.setSubsubdomain(new Subsubdomain(row[18]));
 				article.setTitle(new Title(row[3]));
 				article.setType(new Type(row[5]));

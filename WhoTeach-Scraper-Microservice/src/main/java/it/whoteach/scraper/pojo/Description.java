@@ -5,12 +5,14 @@ import org.springframework.data.neo4j.core.schema.Node;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Node
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Description {
 	@Id
 	private String description;

@@ -21,12 +21,11 @@ import it.whoteach.scraper.pojo.Type;
 import it.whoteach.scraper.pojo.UploadDate;
 
 @Repository
-public interface ArticleRepository extends Neo4jRepository<Article, String> {
-	Article findByIdItem(String idItem);
+public interface ArticleRepository extends Neo4jRepository<Article, Long> {
 	@Query("MATCH(n) DETACH DELETE n")
 	void clearDatabase();
 	@Query("MATCH (n) WHERE NOT (n)--() DELETE n")
 	void clearAlone();
-	@Query("MATCH (n:Article)-[r]->(m) WHERE n.idItem=$idItem DETACH DELETE n")
-	void clearById(String idItem);
+	@Query("MATCH (n:Article)-[r]->(m) WHERE n.id=$id DETACH DELETE n")
+	void clearById(Long id);
 }

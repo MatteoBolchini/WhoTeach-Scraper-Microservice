@@ -18,27 +18,31 @@ import it.whoteach.scraper.pojo.Subsubdomain;
 import it.whoteach.scraper.pojo.Title;
 import it.whoteach.scraper.pojo.Type;
 import it.whoteach.scraper.pojo.UploadDate;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ArticleDTO {
-	private String idItem;
+	private Long id;
 	private String url;
 	private String source;
 	
-	public List<AuthorDTO> authors;
-	public List<DestinationPublicDTO> destinationPublic;
-	public List<KeywordDTO> keywords;
-	public DurationDTO duration;
-	public DifficultyDTO difficulty;
-	public DomainDTO domain;
-	public SubdomainDTO subdomain;
-	public SubsubdomainDTO subsubdomain;
-	public MaxAgeDTO maxAge;
-	public MinAgeDTO minAge;
-	public UploadDateDTO uploadDate;
-	public LanguageDTO language;
-	public DescriptionDTO description;
-	public TypeDTO type;
-	public TitleDTO title;
-	public FormatDTO format;
+	public List<Author> authors;
+	public List<DestinationPublic> destinationPublic;
+	public List<Subdomain> subdomain;
+	public List<Keyword> keywords;
+	public Duration duration;
+	public Difficulty difficulty;
+	public Domain domain;
+	public Subsubdomain subsubdomain;
+	public MaxAge maxAge;
+	public MinAge minAge;
+	public UploadDate uploadDate;
+	public Language language;
+	public Description description;
+	public Type type;
+	public Title title;
+	public Format format;
 		
 }
