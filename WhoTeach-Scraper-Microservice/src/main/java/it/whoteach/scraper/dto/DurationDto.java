@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FormatDTO {
-	private String format;
+public class DurationDto {
+	private String duration;
 }

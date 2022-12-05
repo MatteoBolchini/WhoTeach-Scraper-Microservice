@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TitleDTO {
-	private String title;
+public class KeywordDto {
+	private String keyword;
 }

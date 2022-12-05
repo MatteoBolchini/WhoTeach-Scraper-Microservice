@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DescriptionDTO {
-	private String description;
+public class DestinationPublicDto {
+	private String destinationPublic;
 }

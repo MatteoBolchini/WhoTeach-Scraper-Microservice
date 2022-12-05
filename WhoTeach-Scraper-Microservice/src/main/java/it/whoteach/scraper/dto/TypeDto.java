@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class KeywordDTO {
-	private String keyword;
+public class TypeDto {
+	private String type;
 }

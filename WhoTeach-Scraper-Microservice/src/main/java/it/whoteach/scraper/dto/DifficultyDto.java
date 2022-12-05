@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SubsubdomainDTO {
-	private String subsubdomain;
+public class DifficultyDto {
+	private String difficulty;
 }

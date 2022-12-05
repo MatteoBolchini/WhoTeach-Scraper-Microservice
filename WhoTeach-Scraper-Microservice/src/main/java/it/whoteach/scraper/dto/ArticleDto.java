@@ -23,7 +23,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ArticleDTO {
+public class ArticleDto {
 	private Long id;
 	private String url;
 	private String source;

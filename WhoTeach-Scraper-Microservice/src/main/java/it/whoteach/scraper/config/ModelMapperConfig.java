@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.modelmapper.Converter;
-import it.whoteach.scraper.dto.ArticleDTO;
+import it.whoteach.scraper.dto.ArticleDto;
 import it.whoteach.scraper.exception.RequiredFieldNullException;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.service.ArticleService;
@@ -19,11 +19,11 @@ public class ModelMapperConfig {
 	@Bean
 	public ModelMapper modelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.addConverter(articleConverterDtE, ArticleDTO.class, Article.class);
+		modelMapper.addConverter(articleConverterDtE, ArticleDto.class, Article.class);
 		return modelMapper;
 	}
 	
-	private Converter<ArticleDTO, Article> articleConverterDtE = context -> {
+	private Converter<ArticleDto, Article> articleConverterDtE = context -> {
 		Article article;
 		if(context.getSource().getId() != null) 
 			article = articleService.findById(context.getSource().getId());

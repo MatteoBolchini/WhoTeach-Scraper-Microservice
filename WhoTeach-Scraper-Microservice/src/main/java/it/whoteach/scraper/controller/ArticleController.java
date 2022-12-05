@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.whoteach.scraper.dto.ArticleDTO;
+import it.whoteach.scraper.dto.ArticleDto;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.service.ArticleService;
 
@@ -48,13 +48,13 @@ public class ArticleController {
 
 	// aggiunge un articolo definito in un Json
 	@PostMapping("/article")
-	public Article newArticle(@RequestBody ArticleDTO article) {
+	public Article newArticle(@RequestBody ArticleDto article) {
 		return articleService.save(this.modelMapper.map(article, Article.class));
 	}
 
 	// aggiunge gli articoli definiti in un JsonArray
 	@PostMapping("/articles")
-	public List<Article> newArticles(@RequestBody List<ArticleDTO> articles) {
+	public List<Article> newArticles(@RequestBody List<ArticleDto> articles) {
 		List<Article> articleList = modelMapper.map(articles, new TypeToken<List<Article>>() {
             private static final long serialVersionUID = 6770702868342402817L;
         }.getType());
@@ -63,7 +63,7 @@ public class ArticleController {
 	
 	// aggiorna i valori di un articolo con una sua versione aggiornata
 	@PutMapping("/update")
-	public ResponseEntity<Article> updateById(@RequestBody ArticleDTO article) {
+	public ResponseEntity<Article> updateById(@RequestBody ArticleDto article) {
 		if(article.getId() == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		return new ResponseEntity<>(articleService.update(this.modelMapper.map(article, Article.class)), HttpStatus.OK);

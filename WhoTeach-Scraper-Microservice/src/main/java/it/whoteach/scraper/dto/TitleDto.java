@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DifficultyDTO {
-	private String difficulty;
+public class TitleDto {
+	private String title;
 }

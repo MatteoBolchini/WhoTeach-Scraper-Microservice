@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UploadDateDTO {
-	private String uploadDate;
+public class DomainDto {
+	private String domain;
 }

@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LanguageDTO {
-	private String language;
+public class MaxAgeDto {
+	private String maxAge;
 }

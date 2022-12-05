@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SubdomainDTO {
-	private String subdomain;
+public class FormatDto {
+	private String format;
 }

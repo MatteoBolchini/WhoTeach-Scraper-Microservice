@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AuthorDTO {
-	private String name;
+public class DescriptionDto {
+	private String description;
 }

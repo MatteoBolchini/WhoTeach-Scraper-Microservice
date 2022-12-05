@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DestinationPublicDTO {
-	private String destinationPublic;
+public class SubdomainDto {
+	private String subdomain;
 }

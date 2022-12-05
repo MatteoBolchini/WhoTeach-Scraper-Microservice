@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MaxAgeDTO {
-	private String maxAge;
+public class AuthorDto {
+	private String name;
 }

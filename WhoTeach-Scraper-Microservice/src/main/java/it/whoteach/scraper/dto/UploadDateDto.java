@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MinAgeDTO {
-	private String minAge;
+public class UploadDateDto {
+	private String uploadDate;
 }
