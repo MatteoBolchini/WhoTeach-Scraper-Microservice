@@ -3,7 +3,6 @@ package it.whoteach.scraper.config;
 import java.io.FileReader;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,11 +3,9 @@ package it.whoteach.scraper.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import it.whoteach.scraper.dto.ArticleDTO;
 import it.whoteach.scraper.exception.EntityNotFoundException;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.repository.ArticleRepository;

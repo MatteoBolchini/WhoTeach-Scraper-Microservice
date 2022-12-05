@@ -76,7 +76,7 @@ public class ArticleController {
 	}
 	
 	// svuota tutto il database
-	@DeleteMapping("/delete")
+	@DeleteMapping("/clear")
 	public void clear() {
 		articleService.clearDatabase();
 	}
