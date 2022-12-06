@@ -28,21 +28,21 @@ public class ArticleDto {
 	private String url;
 	private String source;
 	
-	public List<Author> authors;
-	public List<DestinationPublic> destinationPublic;
-	public List<Subdomain> subdomain;
-	public List<Keyword> keywords;
-	public Duration duration;
-	public Difficulty difficulty;
-	public Domain domain;
-	public Subsubdomain subsubdomain;
-	public MaxAge maxAge;
-	public MinAge minAge;
-	public UploadDate uploadDate;
-	public Language language;
-	public Description description;
-	public Type type;
-	public Title title;
-	public Format format;
+	public List<AuthorDto> authors;
+	public List<DestinationPublicDto> destinationPublic;
+	public List<SubdomainDto> subdomain;
+	public List<KeywordDto> keywords;
+	public DurationDto duration;
+	public DifficultyDto difficulty;
+	public DomainDto domain;
+	public SubsubdomainDto subsubdomain;
+	public MaxAgeDto maxAge;
+	public MinAgeDto minAge;
+	public UploadDateDto uploadDate;
+	public LanguageDto language;
+	public DescriptionDto description;
+	public TypeDto type;
+	public TitleDto title;
+	public FormatDto format;
 		
 }

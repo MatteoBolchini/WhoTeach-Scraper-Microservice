@@ -1,29 +1,86 @@
 package it.whoteach.scraper.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.modelmapper.Converter;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+
+import io.netty.util.internal.StringUtil;
 import it.whoteach.scraper.dto.ArticleDto;
+import it.whoteach.scraper.dto.AuthorDto;
+import it.whoteach.scraper.dto.DescriptionDto;
+import it.whoteach.scraper.dto.DestinationPublicDto;
+import it.whoteach.scraper.dto.DifficultyDto;
+import it.whoteach.scraper.dto.DomainDto;
+import it.whoteach.scraper.dto.DurationDto;
+import it.whoteach.scraper.dto.FormatDto;
+import it.whoteach.scraper.dto.KeywordDto;
+import it.whoteach.scraper.dto.LanguageDto;
+import it.whoteach.scraper.dto.MaxAgeDto;
+import it.whoteach.scraper.dto.MinAgeDto;
+import it.whoteach.scraper.dto.SubdomainDto;
+import it.whoteach.scraper.dto.SubsubdomainDto;
+import it.whoteach.scraper.dto.TitleDto;
+import it.whoteach.scraper.dto.TypeDto;
+import it.whoteach.scraper.dto.UploadDateDto;
 import it.whoteach.scraper.exception.RequiredFieldNullException;
 import it.whoteach.scraper.pojo.Article;
+import it.whoteach.scraper.pojo.Author;
+import it.whoteach.scraper.pojo.Description;
+import it.whoteach.scraper.pojo.DestinationPublic;
+import it.whoteach.scraper.pojo.Difficulty;
+import it.whoteach.scraper.pojo.Domain;
+import it.whoteach.scraper.pojo.Duration;
+import it.whoteach.scraper.pojo.Format;
+import it.whoteach.scraper.pojo.Keyword;
+import it.whoteach.scraper.pojo.Language;
+import it.whoteach.scraper.pojo.MaxAge;
+import it.whoteach.scraper.pojo.MinAge;
+import it.whoteach.scraper.pojo.Subdomain;
+import it.whoteach.scraper.pojo.Subsubdomain;
+import it.whoteach.scraper.pojo.Title;
+import it.whoteach.scraper.pojo.Type;
+import it.whoteach.scraper.pojo.UploadDate;
 import it.whoteach.scraper.service.ArticleService;
 
 @Configuration
 public class ModelMapperConfig {
-	
+
 	@Autowired
 	ArticleService articleService;
-	
+
+	private ModelMapper modelMapper = new ModelMapper();
+
 	@Bean
 	public ModelMapper modelMapper() {
 		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.addConverter(articleConverterDtE, ArticleDto.class, Article.class);
+		modelMapper.addConverter(articleConverterDto, ArticleDto.class, Article.class);
+		modelMapper.addConverter(authorConverterDto, AuthorDto.class, Author.class);
+		modelMapper.addConverter(descriptionConverterDto, DescriptionDto.class, Description.class);
+		modelMapper.addConverter(destinationPublicConverterDto, DestinationPublicDto.class, DestinationPublic.class);
+		modelMapper.addConverter(difficultyConverterDto, DifficultyDto.class, Difficulty.class);
+		modelMapper.addConverter(domainConverterDto, DomainDto.class, Domain.class);
+		modelMapper.addConverter(durationConverterDto, DurationDto.class, Duration.class);
+		modelMapper.addConverter(formatConverterDto, FormatDto.class, Format.class);
+		modelMapper.addConverter(keywordConverterDto, KeywordDto.class, Keyword.class);
+		modelMapper.addConverter(languageConverterDto, LanguageDto.class, Language.class);
+		modelMapper.addConverter(maxAgeConverterDto, MaxAgeDto.class, MaxAge.class);
+		modelMapper.addConverter(minAgeConverterDto, MinAgeDto.class, MinAge.class);
+		modelMapper.addConverter(subdomainConverterDto, SubdomainDto.class, Subdomain.class);
+		modelMapper.addConverter(subsubdomainConverterDto, SubsubdomainDto.class, Subsubdomain.class);
+		modelMapper.addConverter(titleConverterDto, TitleDto.class, Title.class);
+		modelMapper.addConverter(typeConverterDto, TypeDto.class, Type.class);
+		modelMapper.addConverter(uploadDateConverterDto, UploadDateDto.class, UploadDate.class);
 		return modelMapper;
 	}
-	
-	private Converter<ArticleDto, Article> articleConverterDtE = context -> {
+
+	private Converter<ArticleDto, Article> articleConverterDto = context -> {
 		Article article;
 		if(context.getSource().getId() != null) 
 			article = articleService.findById(context.getSource().getId());
@@ -38,57 +95,187 @@ public class ModelMapperConfig {
 		if(context.getSource().getSource() != null) { 
 			article.setSource(context.getSource().getSource());
 		}
-		//TODO pojo to dto
+
+		// Dtos to pojos
 		if(context.getSource().getAuthors() != null) { 
-			article.setAuthors(context.getSource().getAuthors());
+			List<Author> list1 = new ArrayList<>();
+			for(AuthorDto a : context.getSource().getAuthors()) {
+				if(!a.getName().isEmpty())
+					list1.add(modelMapper.map(a, Author.class));
+			}
+			article.setAuthors(list1);
 		}
+
 		if(context.getSource().getDestinationPublic() != null) { 
-			article.setDestinationPublic(context.getSource().getDestinationPublic());
+			List<DestinationPublic> list2 = new ArrayList<>();
+			for(DestinationPublicDto d : context.getSource().getDestinationPublic()) {
+				if(!d.getDestinationPublic().isEmpty())
+					list2.add(modelMapper.map(d, DestinationPublic.class));
+			}
+			article.setDestinationPublic(list2);
 		}
+
 		if(context.getSource().getSubdomain() != null) { 
-			article.setSubdomain(context.getSource().getSubdomain());
+			List<Subdomain> list3 = new ArrayList<>();
+			for(SubdomainDto s : context.getSource().getSubdomain()) {
+				if(!s.getSubdomain().isEmpty())
+					list3.add(modelMapper.map(s, Subdomain.class));
+			}
+			article.setSubdomain(list3);
 		}
 		if(context.getSource().getKeywords() != null) { 
-			article.setKeywords(context.getSource().getKeywords());
+			List<Keyword> list4 = new ArrayList<>();
+			for(KeywordDto k : context.getSource().getKeywords()) {
+				if(!k.getKeywords().isEmpty())
+					list4.add(modelMapper.map(k, Keyword.class));
+			}
+			article.setKeywords(list4);
 		}
-		if(context.getSource().getDuration().getDuration() != null) { 
-			article.setDuration(context.getSource().getDuration());
+
+		if(context.getSource().getDuration().getDuration() != null
+				&& !context.getSource().getDuration().getDuration().isEmpty()) { 
+			article.setDuration(modelMapper.map(context.getSource().getDuration(), Duration.class));
 		}
-		if(context.getSource().getDifficulty().getDifficulty() != null) { 
-			article.setDifficulty(context.getSource().getDifficulty());
+
+		if(context.getSource().getDifficulty().getDifficulty() != null
+				&& !context.getSource().getDifficulty().getDifficulty().isEmpty()) { 
+			article.setDifficulty(modelMapper.map(context.getSource().getDifficulty(), Difficulty.class));
 		}
-		if(context.getSource().getDomain().getDomain() != null) { 
-			article.setDomain(context.getSource().getDomain());
+
+		if(context.getSource().getDomain().getDomain() != null
+				&& !context.getSource().getDomain().getDomain().isEmpty()) { 
+			article.setDomain(modelMapper.map(context.getSource().getDomain(), Domain.class));
 		}
-		if(context.getSource().getSubsubdomain().getSubsubdomain() != null) { 
-			article.setSubsubdomain(context.getSource().getSubsubdomain());
+
+		if(context.getSource().getSubsubdomain().getSubsubdomain() != null 
+				&& !context.getSource().getSubsubdomain().getSubsubdomain().isEmpty()) { 
+			article.setSubsubdomain(modelMapper.map(context.getSource().getSubsubdomain(), Subsubdomain.class));
 		}
-		if(context.getSource().getMaxAge().getMaxAge() != null) { 
-			article.setMaxAge(context.getSource().getMaxAge());
+
+		if(context.getSource().getMaxAge().getMaxAge() != null
+				&& !context.getSource().getMaxAge().getMaxAge().isEmpty()) { 
+			article.setMaxAge(modelMapper.map(context.getSource().getMaxAge(), MaxAge.class));
 		}
-		if(context.getSource().getMinAge().getMinAge() != null) { 
-			article.setMinAge(context.getSource().getMinAge());
+
+		if(context.getSource().getMinAge().getMinAge() != null
+				&& !context.getSource().getMinAge().getMinAge().isEmpty()) { 
+			article.setMinAge(modelMapper.map(context.getSource().getMinAge(), MinAge.class));
 		}
-		if(context.getSource().getUploadDate().getUploadDate() != null) { 
-			article.setUploadDate(context.getSource().getUploadDate());
+
+		if(context.getSource().getUploadDate().getUploadDate() != null
+				&& !context.getSource().getUploadDate().getUploadDate().isEmpty()) { 
+			article.setUploadDate(modelMapper.map(context.getSource().getUploadDate(), UploadDate.class));
 		}
-		if(context.getSource().getLanguage().getLanguage() != null) { 
-			article.setLanguage(context.getSource().getLanguage());
+
+		if(context.getSource().getLanguage().getLanguage() != null
+				&& !context.getSource().getLanguage().getLanguage().isEmpty()) { 
+			article.setLanguage(modelMapper.map(context.getSource().getLanguage(), Language.class));
 		}
-		if(context.getSource().getDescription().getDescription() != null) { 
-			article.setDescription(context.getSource().getDescription());
+
+		if(context.getSource().getDescription().getDescription() != null
+				&& !context.getSource().getDescription().getDescription().isEmpty()) { 
+			article.setDescription(modelMapper.map(context.getSource().getDescription(), Description.class));
 		}
-		if(context.getSource().getType().getType() != null) { 
-			article.setType(context.getSource().getType());
+
+		if(context.getSource().getType().getType() != null
+				&& !context.getSource().getType().getType().isEmpty()) { 
+			article.setType(modelMapper.map(context.getSource().getType(), Type.class));
 		}
-		if(context.getSource().getTitle().getTitle() != null) { 
-			article.setTitle(context.getSource().getTitle());
+
+		if(context.getSource().getTitle().getTitle() != null
+				&& !context.getSource().getTitle().getTitle().isEmpty()) { 
+			article.setTitle(modelMapper.map(context.getSource().getTitle(), Title.class));
 		}
-		if(context.getSource().getFormat().getFormat() != null) { 
-			article.setFormat(context.getSource().getFormat());
+
+		if(context.getSource().getFormat().getFormat() != null
+				&& !context.getSource().getFormat().getFormat().isEmpty()) { 
+			article.setFormat(modelMapper.map(context.getSource().getFormat(), Format.class));
 		}
+
 		return article;
 	};
 
+	// list 1
+	private Converter<AuthorDto, Author> authorConverterDto = context -> {
+		Author author = new Author(context.getSource().getName());
+		return author;
+	};
+
+	private Converter<DescriptionDto, Description> descriptionConverterDto = context -> {
+		Description description = new Description(context.getSource().getDescription());
+		return description;
+	};
+	// list 2
+	private Converter<DestinationPublicDto, DestinationPublic> destinationPublicConverterDto = context -> {
+		DestinationPublic cestinationPublic = new DestinationPublic(context.getSource().getDestinationPublic());
+		return cestinationPublic;
+	};
+
+	private Converter<DifficultyDto, Difficulty> difficultyConverterDto = context -> {
+		Difficulty difficulty = new Difficulty(context.getSource().getDifficulty());
+		return difficulty;
+	};
+
+	private Converter<DomainDto, Domain> domainConverterDto = context -> {
+		Domain domain = new Domain(context.getSource().getDomain());
+		return domain;
+	};
+	// Integer or Integer-Integer
+	private Converter<DurationDto, Duration> durationConverterDto = context -> {
+		Duration duration = new Duration(context.getSource().getDuration());
+		return duration;
+	};
+
+	private Converter<FormatDto, Format> formatConverterDto = context -> {
+		Format format = new Format(context.getSource().getFormat());
+		return format;
+	};
+	// list 3
+	private Converter<KeywordDto, Keyword> keywordConverterDto = context -> {
+		Keyword keyword = new Keyword(context.getSource().getKeywords());
+		return keyword;
+	};
+
+	private Converter<LanguageDto, Language> languageConverterDto = context -> {
+		Language language = new Language(context.getSource().getLanguage());
+		return language;
+	};
+	// Integer
+	private Converter<MaxAgeDto, MaxAge> maxAgeConverterDto = context -> {
+		MaxAge maxAge = new MaxAge(context.getSource().getMaxAge());
+		return maxAge;
+	};
+	// Integer
+	private Converter<MinAgeDto, MinAge> minAgeConverterDto = context -> {
+		MinAge minAge = new MinAge(context.getSource().getMinAge());
+		return minAge;
+	};
+
+	// list 4
+	private Converter<SubdomainDto, Subdomain> subdomainConverterDto = context -> {
+		Subdomain subdomain = new Subdomain(context.getSource().getSubdomain());
+		return subdomain;
+	};
+
+	private Converter<SubsubdomainDto, Subsubdomain> subsubdomainConverterDto = context -> {
+		Subsubdomain subsubdomain = new Subsubdomain(context.getSource().getSubsubdomain());
+		return subsubdomain;
+	};
+
+	private Converter<TitleDto, Title> titleConverterDto = context -> {
+		Title title = new Title(context.getSource().getTitle());
+		return title;
+	};
+
+	private Converter<TypeDto, Type> typeConverterDto = context -> {
+		Type type = new Type(context.getSource().getType());
+		return type;
+	};
+
+	// gg/mm/aa
+	private Converter<UploadDateDto, UploadDate> uploadDateConverterDto = context -> {
+		UploadDate uploadDate = new UploadDate(context.getSource().getUploadDate());
+		return uploadDate;
+	};
 
 }
