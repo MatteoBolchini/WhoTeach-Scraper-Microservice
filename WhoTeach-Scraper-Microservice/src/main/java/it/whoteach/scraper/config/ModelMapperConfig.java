@@ -2,6 +2,9 @@ package it.whoteach.scraper.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -29,6 +32,8 @@ import it.whoteach.scraper.dto.SubsubdomainDto;
 import it.whoteach.scraper.dto.TitleDto;
 import it.whoteach.scraper.dto.TypeDto;
 import it.whoteach.scraper.dto.UploadDateDto;
+import it.whoteach.scraper.exception.EntityNotFoundException;
+import it.whoteach.scraper.exception.InvalidFieldException;
 import it.whoteach.scraper.exception.RequiredFieldNullException;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.pojo.Author;
@@ -48,7 +53,9 @@ import it.whoteach.scraper.pojo.Title;
 import it.whoteach.scraper.pojo.Type;
 import it.whoteach.scraper.pojo.UploadDate;
 import it.whoteach.scraper.service.ArticleService;
+import lombok.extern.java.Log;
 
+@Log
 @Configuration
 public class ModelMapperConfig {
 
@@ -100,7 +107,7 @@ public class ModelMapperConfig {
 		if(context.getSource().getAuthors() != null) { 
 			List<Author> list1 = new ArrayList<>();
 			for(AuthorDto a : context.getSource().getAuthors()) {
-				if(!a.getName().isEmpty())
+				if(!a.getName().isEmpty()) 							// !a.getName().equals("")
 					list1.add(modelMapper.map(a, Author.class));
 			}
 			article.setAuthors(list1);
@@ -132,62 +139,101 @@ public class ModelMapperConfig {
 			article.setKeywords(list4);
 		}
 
-		if(context.getSource().getDuration().getDuration() != null
+		if(context.getSource().getDuration() != null 
+				&& context.getSource().getDuration().getDuration() != null
 				&& !context.getSource().getDuration().getDuration().isEmpty()) { 
-			article.setDuration(modelMapper.map(context.getSource().getDuration(), Duration.class));
+			Pattern p1 = Pattern.compile("[0-9]{1,2}-[0-9]{2,3}");
+			Pattern p2 = Pattern.compile("[0-9]{3}");
+			Matcher m1 = p1.matcher(context.getSource().getDuration().getDuration());
+			Matcher m2 = p2.matcher(context.getSource().getDuration().getDuration());
+			if(m1.matches() || m2.matches())
+				article.setDuration(modelMapper.map(context.getSource().getDuration(), Duration.class));
+			else { // TODO scriverlo meglio
+				log.log(Level.INFO, "In article " + context.getSource().getId() + " Duration is invalid");
+			}
 		}
 
-		if(context.getSource().getDifficulty().getDifficulty() != null
+		if(context.getSource().getDifficulty() != null 
+				&& context.getSource().getDifficulty().getDifficulty() != null
 				&& !context.getSource().getDifficulty().getDifficulty().isEmpty()) { 
 			article.setDifficulty(modelMapper.map(context.getSource().getDifficulty(), Difficulty.class));
 		}
 
-		if(context.getSource().getDomain().getDomain() != null
+		if(context.getSource().getDomain() != null 
+				&& context.getSource().getDomain().getDomain() != null
 				&& !context.getSource().getDomain().getDomain().isEmpty()) { 
 			article.setDomain(modelMapper.map(context.getSource().getDomain(), Domain.class));
 		}
 
-		if(context.getSource().getSubsubdomain().getSubsubdomain() != null 
+		if(context.getSource().getSubsubdomain() != null 
+				&& context.getSource().getSubsubdomain().getSubsubdomain() != null 
 				&& !context.getSource().getSubsubdomain().getSubsubdomain().isEmpty()) { 
 			article.setSubsubdomain(modelMapper.map(context.getSource().getSubsubdomain(), Subsubdomain.class));
 		}
 
-		if(context.getSource().getMaxAge().getMaxAge() != null
+		if(context.getSource().getMaxAge() != null
+				&& context.getSource().getMaxAge().getMaxAge() != null
 				&& !context.getSource().getMaxAge().getMaxAge().isEmpty()) { 
-			article.setMaxAge(modelMapper.map(context.getSource().getMaxAge(), MaxAge.class));
+			Pattern p = Pattern.compile("[0-9]{1,3}");
+			Matcher m = p.matcher(context.getSource().getMaxAge().getMaxAge());
+			if(m.matches())
+				article.setMaxAge(modelMapper.map(context.getSource().getMaxAge(), MaxAge.class));
+			else { // TODO scriverlo meglio
+				log.log(Level.INFO, "In article " + context.getSource().getId() + " MaxAge is invalid");
+			}
 		}
 
-		if(context.getSource().getMinAge().getMinAge() != null
+		if(context.getSource().getMinAge() != null 
+				&& context.getSource().getMinAge().getMinAge() != null
 				&& !context.getSource().getMinAge().getMinAge().isEmpty()) { 
-			article.setMinAge(modelMapper.map(context.getSource().getMinAge(), MinAge.class));
+			Pattern p = Pattern.compile("[0-9]{1,3}");
+			Matcher m = p.matcher(context.getSource().getMinAge().getMinAge());
+			if(m.matches())
+				article.setMinAge(modelMapper.map(context.getSource().getMinAge(), MinAge.class));
+			else { // TODO scriverlo meglio
+				log.log(Level.INFO, "In article " + context.getSource().getId() + " MinAge is invalid");
+			}
 		}
 
-		if(context.getSource().getUploadDate().getUploadDate() != null
+		if(context.getSource().getUploadDate() != null 
+				&& context.getSource().getUploadDate().getUploadDate() != null
 				&& !context.getSource().getUploadDate().getUploadDate().isEmpty()) { 
-			article.setUploadDate(modelMapper.map(context.getSource().getUploadDate(), UploadDate.class));
+			// TODO si può fare meglio ma risulterebbe illeggibile
+			Pattern p = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{4}");
+			Matcher m = p.matcher(context.getSource().getUploadDate().getUploadDate());
+			if(m.matches()) // TODO scriverlo meglio
+				article.setUploadDate(modelMapper.map(context.getSource().getUploadDate(), UploadDate.class));
+			else {
+				log.log(Level.INFO, "In article " + context.getSource().getId() + " UploadDate is invalid");
+			}
 		}
 
-		if(context.getSource().getLanguage().getLanguage() != null
+		if(context.getSource().getLanguage() != null 
+				&& context.getSource().getLanguage().getLanguage() != null
 				&& !context.getSource().getLanguage().getLanguage().isEmpty()) { 
 			article.setLanguage(modelMapper.map(context.getSource().getLanguage(), Language.class));
 		}
 
-		if(context.getSource().getDescription().getDescription() != null
+		if(context.getSource().getDescription() != null 
+				&& context.getSource().getDescription().getDescription() != null
 				&& !context.getSource().getDescription().getDescription().isEmpty()) { 
 			article.setDescription(modelMapper.map(context.getSource().getDescription(), Description.class));
 		}
 
-		if(context.getSource().getType().getType() != null
+		if(context.getSource().getType() != null 
+				&& context.getSource().getType().getType() != null
 				&& !context.getSource().getType().getType().isEmpty()) { 
 			article.setType(modelMapper.map(context.getSource().getType(), Type.class));
 		}
 
-		if(context.getSource().getTitle().getTitle() != null
+		if(context.getSource().getTitle() != null 
+				&& context.getSource().getTitle().getTitle() != null
 				&& !context.getSource().getTitle().getTitle().isEmpty()) { 
 			article.setTitle(modelMapper.map(context.getSource().getTitle(), Title.class));
 		}
 
-		if(context.getSource().getFormat().getFormat() != null
+		if(context.getSource().getFormat() != null 
+				&& context.getSource().getFormat().getFormat() != null
 				&& !context.getSource().getFormat().getFormat().isEmpty()) { 
 			article.setFormat(modelMapper.map(context.getSource().getFormat(), Format.class));
 		}

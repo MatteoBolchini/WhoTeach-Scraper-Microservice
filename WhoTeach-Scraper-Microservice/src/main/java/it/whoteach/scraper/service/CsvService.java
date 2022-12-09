@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,16 +35,18 @@ import it.whoteach.scraper.dto.UploadDateDto;
 import it.whoteach.scraper.exception.RequiredFieldNullException;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.repository.ArticleRepository;
+import lombok.extern.java.Log;
 
+@Log
 @Service
 public class CsvService {
-	
+
 	@Autowired
 	ArticleRepository articleRepository;
-	
+
 	@Autowired
 	ModelMapper modelMapper;
-		
+
 	public void csvToArticle(String fileName) {
 		int i = 0; // contatore per i test
 		try {
@@ -57,7 +60,7 @@ public class CsvService {
 					.withCSVParser(parser)
 					.build();
 			String[] row;
-			System.out.println("Scansione iniziata: " + LocalTime.now());
+			log.log(Level.INFO, "Scansione iniziata: " + LocalTime.now());
 
 			while((row = csvReader.readNext()) != null  && i != 100) { //  && i != 5000
 				ArticleDto article = new ArticleDto();
@@ -90,44 +93,28 @@ public class CsvService {
 					list4.add(new SubdomainDto(subdomains[m]));
 				}
 				// aggiunge i dati
-				if(list1 != null || list1.isEmpty())
-					article.setAuthors(list1);
-				if(list2 != null || list2.isEmpty())
-					article.setKeywords(list2);
-				if(list3 != null || list3.isEmpty())
-					article.setDestinationPublic(list3);
-				if(list4 != null || list4.isEmpty())
-					article.setSubdomain(list4);
-				if(row[4] != null)
-					article.setDescription(new DescriptionDto(row[4]));
-				if(row[9] != null)
-					article.setDifficulty(new DifficultyDto(row[9]));
-				if(row[16] != null)
-					article.setDomain(new DomainDto(row[16]));
-				if(row[11] != null)
-					article.setDuration(new DurationDto(row[11]));
-				if(row[10] != null)
-					article.setFormat(new FormatDto(row[10]));
-				if(row[8] != null)
-					article.setLanguage(new LanguageDto(row[8]));
-				if(row[14] != null)
-					article.setMaxAge(new MaxAgeDto(row[14]));
-				if(row[13] != null)
-					article.setMinAge(new MinAgeDto(row[13]));
-				if(row[18] != null)
-					article.setSubsubdomain(new SubsubdomainDto(row[18]));
-				if(row[3] != null)
-					article.setTitle(new TitleDto(row[3]));
-				if(row[5] != null)
-					article.setType(new TypeDto(row[5]));
-				if(row[6] != null)
-					article.setUploadDate(new UploadDateDto(row[6]));
+				article.setAuthors(list1);
+				article.setKeywords(list2);
+				article.setDestinationPublic(list3);
+				article.setSubdomain(list4);
+				article.setDescription(new DescriptionDto(row[4]));
+				article.setDifficulty(new DifficultyDto(row[9]));
+				article.setDomain(new DomainDto(row[16]));
+				article.setDuration(new DurationDto(row[11]));
+				article.setFormat(new FormatDto(row[10]));
+				article.setLanguage(new LanguageDto(row[8]));
+				article.setMaxAge(new MaxAgeDto(row[14]));
+				article.setMinAge(new MinAgeDto(row[13]));
+				article.setSubsubdomain(new SubsubdomainDto(row[18]));
+				article.setTitle(new TitleDto(row[3]));
+				article.setType(new TypeDto(row[5]));
+				article.setUploadDate(new UploadDateDto(row[6]));
 				i++;
 				articleRepository.save(this.modelMapper.map(article, Article.class));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("SCANSIONE EFFETTUATA: " + LocalTime.now());
+		log.log(Level.INFO, "SCANSIONE EFFETTUATA: " + LocalTime.now());
 	}
 }
