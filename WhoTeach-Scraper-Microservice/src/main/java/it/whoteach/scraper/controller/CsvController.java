@@ -25,4 +25,12 @@ public class CsvController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
+	@PostMapping("/read-bucket2/{fileName}")
+	public ResponseEntity<Void> readFromBucket2(@PathVariable String fileName) {
+		if(fileName == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		csvService.csvToArticle2(fileName);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
 }

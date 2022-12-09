@@ -11,10 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
-import io.netty.util.internal.StringUtil;
 import it.whoteach.scraper.dto.ArticleDto;
 import it.whoteach.scraper.dto.AuthorDto;
 import it.whoteach.scraper.dto.DescriptionDto;
@@ -32,8 +29,6 @@ import it.whoteach.scraper.dto.SubsubdomainDto;
 import it.whoteach.scraper.dto.TitleDto;
 import it.whoteach.scraper.dto.TypeDto;
 import it.whoteach.scraper.dto.UploadDateDto;
-import it.whoteach.scraper.exception.EntityNotFoundException;
-import it.whoteach.scraper.exception.InvalidFieldException;
 import it.whoteach.scraper.exception.RequiredFieldNullException;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.pojo.Author;
@@ -148,8 +143,9 @@ public class ModelMapperConfig {
 			Matcher m2 = p2.matcher(context.getSource().getDuration().getDuration());
 			if(m1.matches() || m2.matches())
 				article.setDuration(modelMapper.map(context.getSource().getDuration(), Duration.class));
-			else { // TODO scriverlo meglio
-				log.log(Level.INFO, "In article " + context.getSource().getId() + " Duration is invalid");
+			else {
+				log.log(Level.INFO, "In article " + context.getSource().getId() 
+						+ " Duration was invalid, it was considered null");
 			}
 		}
 
@@ -179,7 +175,8 @@ public class ModelMapperConfig {
 			if(m.matches())
 				article.setMaxAge(modelMapper.map(context.getSource().getMaxAge(), MaxAge.class));
 			else { // TODO scriverlo meglio
-				log.log(Level.INFO, "In article " + context.getSource().getId() + " MaxAge is invalid");
+				log.log(Level.INFO, "In article " + context.getSource().getId() 
+						+ " MaxAge was invalid, it was considered null");
 			}
 		}
 
@@ -190,21 +187,23 @@ public class ModelMapperConfig {
 			Matcher m = p.matcher(context.getSource().getMinAge().getMinAge());
 			if(m.matches())
 				article.setMinAge(modelMapper.map(context.getSource().getMinAge(), MinAge.class));
-			else { // TODO scriverlo meglio
-				log.log(Level.INFO, "In article " + context.getSource().getId() + " MinAge is invalid");
+			else {
+				log.log(Level.INFO, "In article " + context.getSource().getId() 
+						+ " MinAge was invalid, it was considered null");
 			}
 		}
 
 		if(context.getSource().getUploadDate() != null 
 				&& context.getSource().getUploadDate().getUploadDate() != null
 				&& !context.getSource().getUploadDate().getUploadDate().isEmpty()) { 
-			// TODO si può fare meglio ma risulterebbe illeggibile
+			// oppure \\d{2}/\\d{2}/\\d{4}
 			Pattern p = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{4}");
 			Matcher m = p.matcher(context.getSource().getUploadDate().getUploadDate());
-			if(m.matches()) // TODO scriverlo meglio
+			if(m.matches()) 
 				article.setUploadDate(modelMapper.map(context.getSource().getUploadDate(), UploadDate.class));
 			else {
-				log.log(Level.INFO, "In article " + context.getSource().getId() + " UploadDate is invalid");
+				log.log(Level.INFO, "In article " + context.getSource().getId() 
+						+ " UploadDate was invalid, it was considered null");
 			}
 		}
 
@@ -237,11 +236,10 @@ public class ModelMapperConfig {
 				&& !context.getSource().getFormat().getFormat().isEmpty()) { 
 			article.setFormat(modelMapper.map(context.getSource().getFormat(), Format.class));
 		}
-
+		
 		return article;
 	};
 
-	// list 1
 	private Converter<AuthorDto, Author> authorConverterDto = context -> {
 		Author author = new Author(context.getSource().getName());
 		return author;
@@ -251,7 +249,7 @@ public class ModelMapperConfig {
 		Description description = new Description(context.getSource().getDescription());
 		return description;
 	};
-	// list 2
+	
 	private Converter<DestinationPublicDto, DestinationPublic> destinationPublicConverterDto = context -> {
 		DestinationPublic cestinationPublic = new DestinationPublic(context.getSource().getDestinationPublic());
 		return cestinationPublic;
@@ -266,7 +264,7 @@ public class ModelMapperConfig {
 		Domain domain = new Domain(context.getSource().getDomain());
 		return domain;
 	};
-	// Integer or Integer-Integer
+	
 	private Converter<DurationDto, Duration> durationConverterDto = context -> {
 		Duration duration = new Duration(context.getSource().getDuration());
 		return duration;
@@ -276,7 +274,7 @@ public class ModelMapperConfig {
 		Format format = new Format(context.getSource().getFormat());
 		return format;
 	};
-	// list 3
+	
 	private Converter<KeywordDto, Keyword> keywordConverterDto = context -> {
 		Keyword keyword = new Keyword(context.getSource().getKeywords());
 		return keyword;
@@ -286,18 +284,17 @@ public class ModelMapperConfig {
 		Language language = new Language(context.getSource().getLanguage());
 		return language;
 	};
-	// Integer
+	
 	private Converter<MaxAgeDto, MaxAge> maxAgeConverterDto = context -> {
 		MaxAge maxAge = new MaxAge(context.getSource().getMaxAge());
 		return maxAge;
 	};
-	// Integer
+	
 	private Converter<MinAgeDto, MinAge> minAgeConverterDto = context -> {
 		MinAge minAge = new MinAge(context.getSource().getMinAge());
 		return minAge;
 	};
 
-	// list 4
 	private Converter<SubdomainDto, Subdomain> subdomainConverterDto = context -> {
 		Subdomain subdomain = new Subdomain(context.getSource().getSubdomain());
 		return subdomain;
@@ -318,10 +315,9 @@ public class ModelMapperConfig {
 		return type;
 	};
 
-	// gg/mm/aa
 	private Converter<UploadDateDto, UploadDate> uploadDateConverterDto = context -> {
 		UploadDate uploadDate = new UploadDate(context.getSource().getUploadDate());
 		return uploadDate;
 	};
-
+	
 }

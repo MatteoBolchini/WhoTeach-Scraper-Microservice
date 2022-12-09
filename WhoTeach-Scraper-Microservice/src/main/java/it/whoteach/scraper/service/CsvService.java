@@ -1,5 +1,6 @@
 package it.whoteach.scraper.service;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import com.opencsv.bean.CsvToBeanBuilder;
 
 import it.whoteach.scraper.dto.ArticleDto;
 import it.whoteach.scraper.dto.AuthorDto;
@@ -46,9 +48,30 @@ public class CsvService {
 
 	@Autowired
 	ModelMapper modelMapper;
-
-	public void csvToArticle(String fileName) {
-		int i = 0; // contatore per i test
+	
+	public void csvToArticle2(String fileName) { // 15 minuti
+		try {
+			log.log(Level.INFO, "Scansione iniziata: " + LocalTime.now());
+			List<ArticleDto> articles = new CsvToBeanBuilder(new FileReader(String.format("src/main/resources/%s", fileName)))
+					.withSeparator(';')
+					.withIgnoreQuotations(false)
+					.withType(ArticleDto.class)
+					.build()
+					.parse();
+			for(ArticleDto a : articles) {
+				articleRepository.save(this.modelMapper.map(a, Article.class));
+			}
+			log.log(Level.INFO, "SCANSIONE EFFETTUATA: " + LocalTime.now());
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	public void csvToArticle(String fileName) { // 15 minuti
+		// contatore per i test
+		//int i = 0; 
 		try {
 			FileReader fileReader = new FileReader(String.format("src/main/resources/%s", fileName));
 			CSVParser parser = new CSVParserBuilder()
@@ -62,7 +85,7 @@ public class CsvService {
 			String[] row;
 			log.log(Level.INFO, "Scansione iniziata: " + LocalTime.now());
 
-			while((row = csvReader.readNext()) != null  && i != 100) { //  && i != 5000
+			while((row = csvReader.readNext()) != null) { //  && i != 5000
 				ArticleDto article = new ArticleDto();
 				if(row[15] == null || row[1] == null)
 					throw new RequiredFieldNullException("Url and Source are mandatory");
@@ -109,7 +132,7 @@ public class CsvService {
 				article.setTitle(new TitleDto(row[3]));
 				article.setType(new TypeDto(row[5]));
 				article.setUploadDate(new UploadDateDto(row[6]));
-				i++;
+				//i++;
 				articleRepository.save(this.modelMapper.map(article, Article.class));
 			}
 		} catch (Exception e) {

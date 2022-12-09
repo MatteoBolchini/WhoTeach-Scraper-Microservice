@@ -1,5 +1,7 @@
 package it.whoteach.scraper.dto;
 
+import com.opencsv.bean.CsvBindAndSplitByName;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
