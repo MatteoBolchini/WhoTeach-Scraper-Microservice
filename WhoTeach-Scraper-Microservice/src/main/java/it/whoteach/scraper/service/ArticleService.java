@@ -15,12 +15,8 @@ public class ArticleService {
 	@Autowired
 	private ArticleRepository articleRepository;
 
-	public List<Article> allByIdItem(Long[] ids) {
-		List<Article> list = new ArrayList<>();
-		for(Long id : ids) {
-			list.add(findById(id));
-		}
-		return list;
+	public List<Article> findAllById(List<Long> ids) {
+		return articleRepository.findAllById(ids);
 	}
 
 	public Article save(Article article) {
@@ -45,7 +41,7 @@ public class ArticleService {
 	}
 
 	public void clearById(Long id) {
-		articleRepository.deleteById(id);
+		articleRepository.clearById(id);
 		deleteAlone();
 	}
 

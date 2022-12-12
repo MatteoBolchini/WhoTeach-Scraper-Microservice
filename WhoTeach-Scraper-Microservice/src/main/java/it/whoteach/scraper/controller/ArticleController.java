@@ -1,5 +1,6 @@
 package it.whoteach.scraper.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.whoteach.scraper.dto.ArticleDto;
+import it.whoteach.scraper.exception.RequiredFieldNullException;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.service.ArticleService;
 
@@ -35,15 +37,15 @@ public class ArticleController {
 	}
 	
 	// restituisce l'articolo con l'idItem specificato
-	@GetMapping("/read/{id}")
+	@GetMapping("/get/{id}")
 	public Article singleByIdItem(@PathVariable Long id) {
 		return articleService.findById(id);
 	}
 	
 	// restituisce gli articoli con la lista di idItem specificata
-	@GetMapping("/readAll/{ids}") 
-	public List<Article> allByIdItem(@PathVariable Long[] ids) {
-		return articleService.allByIdItem(ids);
+	@GetMapping("/getAll/{ids}") 
+	public List<Article> allByIdItem(@PathVariable List<Long> ids) {
+		return articleService.findAllById(ids);
 	}
 
 	// aggiunge un articolo definito in un Json
@@ -63,10 +65,21 @@ public class ArticleController {
 	
 	// aggiorna i valori di un articolo con una sua versione aggiornata
 	@PutMapping("/update")
-	public ResponseEntity<Article> updateById(@RequestBody ArticleDto article) {
+	public ResponseEntity<Article> update(@RequestBody ArticleDto article) {
 		if(article.getId() == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		return new ResponseEntity<>(articleService.update(this.modelMapper.map(article, Article.class)), HttpStatus.OK);
+	}
+	
+	@PutMapping("/updateAll")
+	public List<Article> updateAll(@RequestBody List<ArticleDto> articles) {
+		List<Article> list = new ArrayList<>();
+		for(ArticleDto a : articles) {
+			if(a.getId() == null)
+				throw new RequiredFieldNullException("Id is mandatory");
+			list.add(articleService.update(this.modelMapper.map(a, Article.class)));
+		}
+		return list;
 	}
 
 	// elimina un articolo e ripulisce il database dai nodi rimasti isolati

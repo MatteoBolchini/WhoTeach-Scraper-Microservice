@@ -24,4 +24,6 @@ import it.whoteach.scraper.pojo.UploadDate;
 public interface ArticleRepository extends Neo4jRepository<Article, Long> {
 	@Query("MATCH (n) WHERE NOT (n)--() DELETE n")
 	void deleteAlone();
+	@Query("MATCH (n) WHERE ID(n) = $id DETACH DELETE n")
+	void clearById(Long id);
 }

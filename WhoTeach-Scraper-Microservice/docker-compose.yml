@@ -1,0 +1,6 @@
+versione: '3'
+services:
+  whoteach-scraper-microservice:
+    image: whoteach-docker-microservice
+    build: .
+    ports: 8081:8080
