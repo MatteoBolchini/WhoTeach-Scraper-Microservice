@@ -84,8 +84,9 @@ public class ModelMapperConfig {
 
 	private Converter<ArticleDto, Article> articleConverterDto = context -> {
 		Article article;
-		if(context.getSource().getId() != null) 
+		if(context.getSource().getId() != null) { 
 			article = articleService.findById(context.getSource().getId());
+		}
 		else {
 			if(context.getSource().getUrl() == null || context.getSource().getSource() == null)
 				throw new RequiredFieldNullException("Url and Source are mandatory");
@@ -108,7 +109,7 @@ public class ModelMapperConfig {
 		if(context.getSource().getAuthors() != null) { 
 			List<Author> list1 = new ArrayList<>();
 			for(AuthorDto a : context.getSource().getAuthors()) {
-				if(!a.getName().isEmpty()) 							// !a.getName().equals("")
+				if(!a.getName().isEmpty()) 							
 					list1.add(modelMapper.map(a, Author.class));
 			}
 			article.setAuthors(list1);

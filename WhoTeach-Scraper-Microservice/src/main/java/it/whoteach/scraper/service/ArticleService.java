@@ -14,13 +14,24 @@ import it.whoteach.scraper.repository.ArticleRepository;
 public class ArticleService {
 	@Autowired
 	private ArticleRepository articleRepository;
-
+	
+	public Article findById(Long id) {
+		return articleRepository.findById(id).orElseThrow(()-> 
+		new EntityNotFoundException(String.format("Article with id [%s] not found", id)));
+	}
+	
 	public List<Article> findAllById(List<Long> ids) {
 		return articleRepository.findAllById(ids);
 	}
+	
+	public List<Article> findAll() {
+		return articleRepository.findAll();
+	}
 
 	public Article save(Article article) {
-		return articleRepository.save(article);
+		articleRepository.save(article);
+		deleteAlone();
+		return article;
 	}
 
 	public List<Article> saveAll(List<Article> articles) {
@@ -29,15 +40,6 @@ public class ArticleService {
 
 	public Article update(Article article) {
 		return save(article);
-	}
-
-	public List<Article> findAll() {
-		return articleRepository.findAll();
-	}
-
-	public Article findById(Long id) {
-		return articleRepository.findById(id).orElseThrow(()-> 
-		new EntityNotFoundException(String.format("article with id [%s] not found", id)));
 	}
 
 	public void clearById(Long id) {
@@ -51,5 +53,9 @@ public class ArticleService {
 
 	public void clearDatabase() {
 		articleRepository.deleteAll();
+	}
+
+	public void delete(Article article) {
+		articleRepository.delete(article);
 	}
 }

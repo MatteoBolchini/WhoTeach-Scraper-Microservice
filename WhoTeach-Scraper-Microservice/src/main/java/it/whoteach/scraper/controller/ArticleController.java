@@ -23,10 +23,10 @@ import it.whoteach.scraper.service.ArticleService;
 
 @RestController
 public class ArticleController {
-	
+
 	@Autowired
 	private ModelMapper modelMapper;
-	
+
 	@Autowired
 	private ArticleService articleService;
 
@@ -35,13 +35,13 @@ public class ArticleController {
 	public List<Article> all() {
 		return articleService.findAll();
 	}
-	
+
 	// restituisce l'articolo con l'idItem specificato
 	@GetMapping("/get/{id}")
 	public Article singleByIdItem(@PathVariable Long id) {
 		return articleService.findById(id);
 	}
-	
+
 	// restituisce gli articoli con la lista di idItem specificata
 	@GetMapping("/getAll/{ids}") 
 	public List<Article> allByIdItem(@PathVariable List<Long> ids) {
@@ -50,54 +50,66 @@ public class ArticleController {
 
 	// aggiunge un articolo definito in un Json
 	@PostMapping("/article")
-	public Article newArticle(@RequestBody ArticleDto article) {
-		return articleService.save(this.modelMapper.map(article, Article.class));
+	public Long newArticle(@RequestBody ArticleDto article) {
+		return articleService.save(this.modelMapper.map(article, Article.class)).getId();
 	}
 
 	// aggiunge gli articoli definiti in un JsonArray
 	@PostMapping("/articles")
-	public List<Article> newArticles(@RequestBody List<ArticleDto> articles) {
-		List<Article> articleList = modelMapper.map(articles, new TypeToken<List<Article>>() {
-            private static final long serialVersionUID = 6770702868342402817L;
-        }.getType());
-		return articleService.saveAll(articleList);
-	}
-	
-	// aggiorna i valori di un articolo con una sua versione aggiornata
-	@PutMapping("/update")
-	public ResponseEntity<Article> update(@RequestBody ArticleDto article) {
-		if(article.getId() == null)
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		return new ResponseEntity<>(articleService.update(this.modelMapper.map(article, Article.class)), HttpStatus.OK);
-	}
-	
-	@PutMapping("/updateAll")
-	public List<Article> updateAll(@RequestBody List<ArticleDto> articles) {
-		List<Article> list = new ArrayList<>();
-		for(ArticleDto a : articles) {
-			if(a.getId() == null)
-				throw new RequiredFieldNullException("Id is mandatory");
-			list.add(articleService.update(this.modelMapper.map(a, Article.class)));
-		}
-		return list;
+	public List<Long> newArticles(@RequestBody List<ArticleDto> articles) {
+		List<Long> ids = new ArrayList<>();
+		List<Article> articleList = modelMapper.map(articles, new TypeToken<List<Article>>() {}.getType());
+		articleService.saveAll(articleList);
+		for(Article a : articleList)
+			ids.add(a.getId());
+		return ids;
 	}
 
-	// elimina un articolo e ripulisce il database dai nodi rimasti isolati
+	// aggiorna l'articolo
+	@PutMapping("/update")
+	public Long update(@RequestBody ArticleDto article) {
+		if(article.getId() == null)
+			throw new RequiredFieldNullException("Id is mandatory for update");
+		return articleService.update(this.modelMapper.map(article, Article.class)).getId();
+	}
+
+	// aggiorna la lista degli articoli
+	@PutMapping("/updateAll")
+	public List<Long> updateAll(@RequestBody List<ArticleDto> articles) {
+		List<Long> ids = new ArrayList<>();
+		for(ArticleDto a : articles) {
+			if(a.getId() == null)
+				throw new RequiredFieldNullException("Id is mandatory for update");
+			else {
+				articleService.update(this.modelMapper.map(a, Article.class));
+				ids.add(a.getId());
+			}
+		}	
+		return ids;
+	}
+
+	// elimina un articolo
+	@DeleteMapping("/delete")
+	public void delete(@RequestBody Article article) {
+		articleService.delete(article);
+	}
+
+	// elimina un articolo tramite id
 	@DeleteMapping("/delete/{id}") 
 	public void clearById(@PathVariable Long id) {
 		articleService.clearById(id);
 	}
-	
+
+	// elimina i nodi che non hanno relazioni
+	@DeleteMapping("/deleteAloneNodes")
+	public void deleteAloneNodes() {
+		articleService.deleteAlone();
+	}
+
 	// svuota tutto il database
 	@DeleteMapping("/clear")
 	public void clear() {
 		articleService.clearDatabase();
 	}
-
-	// elimina i nodi che non hanno relazioni
-	// da decidere se fixare questa cosa nei metodi/chiamarlo ogni volta che viene fatto un metodo/chiamarlo manualmente
-	@DeleteMapping("/deleteAloneNodes")
-	public void deleteAloneNodes() {
-		articleService.deleteAlone();
-	}
+	
 }
