@@ -71,7 +71,7 @@ public class CsvService {
 	
 	public void csvToArticle(String fileName) { // 15 minuti
 		// contatore per i test
-		//int i = 0; 
+		int i = 0; 
 		try {
 			FileReader fileReader = new FileReader(String.format("src/main/resources/%s", fileName));
 			CSVParser parser = new CSVParserBuilder()
@@ -85,7 +85,7 @@ public class CsvService {
 			String[] row;
 			log.log(Level.INFO, "Scansione iniziata: " + LocalTime.now());
 
-			while((row = csvReader.readNext()) != null) { //  && i != 5000
+			while((row = csvReader.readNext()) != null && i != 1000) { //  && i != 5000
 				ArticleDto article = new ArticleDto();
 				if(row[15] == null || row[1] == null)
 					throw new RequiredFieldNullException("Url and Source are mandatory");
@@ -132,7 +132,7 @@ public class CsvService {
 				article.setTitle(new TitleDto(row[3]));
 				article.setType(new TypeDto(row[5]));
 				article.setUploadDate(new UploadDateDto(row[6]));
-				//i++;
+				i++;
 				articleRepository.save(this.modelMapper.map(article, Article.class));
 			}
 		} catch (Exception e) {

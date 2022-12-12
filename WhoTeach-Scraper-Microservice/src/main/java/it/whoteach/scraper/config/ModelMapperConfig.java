@@ -91,14 +91,20 @@ public class ModelMapperConfig {
 				throw new RequiredFieldNullException("Url and Source are mandatory");
 			article = new Article();
 		}
-		if(context.getSource().getUrl() != null) { 
-			article.setUrl(context.getSource().getUrl());
+		if(context.getSource().getUrl() != null) {
+			Pattern p = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+			Matcher m = p.matcher(context.getSource().getUrl());
+			if(m.matches())
+				article.setUrl(context.getSource().getUrl());
+			else {
+				throw new RequiredFieldNullException("Url is mandatory");
+			}
 		}
 		if(context.getSource().getSource() != null) { 
 			article.setSource(context.getSource().getSource());
 		}
 
-		// Dtos to pojos
+		// Dto to pojo
 		if(context.getSource().getAuthors() != null) { 
 			List<Author> list1 = new ArrayList<>();
 			for(AuthorDto a : context.getSource().getAuthors()) {
