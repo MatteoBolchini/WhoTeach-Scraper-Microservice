@@ -1,5 +1,8 @@
 package it.whoteach.scraper.controller;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
