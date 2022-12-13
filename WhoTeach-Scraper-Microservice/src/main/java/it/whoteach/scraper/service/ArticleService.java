@@ -42,8 +42,8 @@ public class ArticleService {
 		return save(article);
 	}
 
-	public void clearById(Long id) {
-		articleRepository.clearById(id);
+	public void deleteById(Long id) {
+		articleRepository.deleteById(id);
 		deleteAlone();
 	}
 

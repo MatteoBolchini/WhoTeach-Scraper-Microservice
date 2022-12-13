@@ -97,7 +97,7 @@ public class ArticleController {
 	// elimina un articolo tramite id
 	@DeleteMapping("/delete/{id}") 
 	public void clearById(@PathVariable Long id) {
-		articleService.clearById(id);
+		articleService.deleteById(id);
 	}
 
 	// elimina i nodi che non hanno relazioni

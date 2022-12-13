@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,12 +26,12 @@ public class CsvController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
-	@PostMapping("/read-bucket2/{fileName}")
-	public ResponseEntity<Void> readFromBucket2(@PathVariable String fileName) {
+	@PutMapping("/update-bucket/{fileName}")
+	public ResponseEntity<Void> updateFromBucket(@PathVariable String fileName) {
 		if(fileName == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		csvService.csvToArticle2(fileName);
-		return new ResponseEntity<>(HttpStatus.OK);
+		csvService.csvToArticle(fileName);
+		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.opencsv.bean.CsvBindAndSplitByName;
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
 import com.opencsv.bean.CsvRecurse;
 
 import it.whoteach.scraper.csvConverter.TextToAuthorDto;
@@ -17,6 +18,7 @@ import lombok.Setter;
 @Setter
 public class ArticleDto {
 	
+	@CsvBindByName(column = "id", required = false)
 	private Long id;
 	@CsvBindByName(column = "URI")
 	private String url;

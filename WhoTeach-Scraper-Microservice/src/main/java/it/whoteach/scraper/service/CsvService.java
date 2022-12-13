@@ -49,7 +49,7 @@ public class CsvService {
 	@Autowired
 	ModelMapper modelMapper;
 	
-	public void csvToArticle2(String fileName) { // 15 minuti
+	public void csvToArticle(String fileName) {
 		try {
 			log.log(Level.INFO, "Scansione iniziata: " + LocalTime.now());
 			List<ArticleDto> articles = new CsvToBeanBuilder(new FileReader(String.format("src/main/resources/%s", fileName)))
@@ -68,76 +68,5 @@ public class CsvService {
 			e.printStackTrace();
 		}	
 	}
-	
-	public void csvToArticle(String fileName) { // 15 minuti
-		// contatore per i test
-		int i = 0; 
-		try {
-			FileReader fileReader = new FileReader(String.format("src/main/resources/%s", fileName));
-			CSVParser parser = new CSVParserBuilder()
-					.withSeparator(';')
-					.withIgnoreQuotations(false)
-					.build();
-			CSVReader csvReader = new CSVReaderBuilder(fileReader)
-					.withSkipLines(1)
-					.withCSVParser(parser)
-					.build();
-			String[] row;
-			log.log(Level.INFO, "Scansione iniziata: " + LocalTime.now());
 
-			while((row = csvReader.readNext()) != null && i != 1000) { //  && i != 5000
-				ArticleDto article = new ArticleDto();
-				if(row[15] == null || row[1] == null)
-					throw new RequiredFieldNullException("Url and Source are mandatory");
-				article.setSource(row[15]);
-				article.setUrl(row[1]);
-				// crea la lista degli autori
-				String[] authors = row[7].split(",");
-				List<AuthorDto> list1 = new ArrayList<>();
-				for(int j = 0;j < authors.length;j++) {
-					list1.add(new AuthorDto(authors[j]));
-				}
-				// crea la lista delle keywords
-				String[] keywords = row[2].split(",");
-				List<KeywordDto> list2 = new ArrayList<>();
-				for(int k = 0;k < keywords.length;k++) {
-					list2.add(new KeywordDto(keywords[k]));
-				}
-				// crea la lista delle destination public
-				String[] destinations = row[12].split(",");
-				List<DestinationPublicDto> list3 = new ArrayList<>();
-				for(int l = 0;l < destinations.length;l++) {
-					list3.add(new DestinationPublicDto(destinations[l]));
-				}
-				// crea la lista dei subdomain
-				String[] subdomains = row[17].split(",");
-				List<SubdomainDto> list4 = new ArrayList<>();
-				for(int m = 0;m < subdomains.length;m++) {
-					list4.add(new SubdomainDto(subdomains[m]));
-				}
-				// aggiunge i dati
-				article.setAuthors(list1);
-				article.setKeywords(list2);
-				article.setDestinationPublic(list3);
-				article.setSubdomain(list4);
-				article.setDescription(new DescriptionDto(row[4]));
-				article.setDifficulty(new DifficultyDto(row[9]));
-				article.setDomain(new DomainDto(row[16]));
-				article.setDuration(new DurationDto(row[11]));
-				article.setFormat(new FormatDto(row[10]));
-				article.setLanguage(new LanguageDto(row[8]));
-				article.setMaxAge(new MaxAgeDto(row[14]));
-				article.setMinAge(new MinAgeDto(row[13]));
-				article.setSubsubdomain(new SubsubdomainDto(row[18]));
-				article.setTitle(new TitleDto(row[3]));
-				article.setType(new TypeDto(row[5]));
-				article.setUploadDate(new UploadDateDto(row[6]));
-				i++;
-				articleRepository.save(this.modelMapper.map(article, Article.class));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		log.log(Level.INFO, "SCANSIONE EFFETTUATA: " + LocalTime.now());
-	}
 }
