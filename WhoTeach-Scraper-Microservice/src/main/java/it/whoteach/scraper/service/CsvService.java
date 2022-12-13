@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,8 +39,7 @@ public class CsvService {
 					.parse();
 			for(ArticleDto a : articles) {
 				articleRepository.save(this.modelMapper.map(a, Article.class));
-			}
-			log.log(Level.INFO, "SCANSIONE EFFETTUATA: " + LocalTime.now());
+			}			log.log(Level.INFO, "SCANSIONE EFFETTUATA: " + LocalTime.now());
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {

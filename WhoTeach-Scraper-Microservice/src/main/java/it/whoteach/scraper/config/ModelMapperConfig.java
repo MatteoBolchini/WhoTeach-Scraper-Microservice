@@ -181,7 +181,7 @@ public class ModelMapperConfig {
 			Matcher m = p.matcher(context.getSource().getMaxAge().getMaxAge());
 			if(m.matches())
 				article.setMaxAge(modelMapper.map(context.getSource().getMaxAge(), MaxAge.class));
-			else { // TODO scriverlo meglio
+			else { 
 				log.log(Level.INFO, "In article " + context.getSource().getId() 
 						+ " MaxAge was invalid, it was considered null");
 			}

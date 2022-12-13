@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import it.whoteach.scraper.exception.EntityNotFoundException;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.repository.ArticleRepository;
 import lombok.extern.java.Log;
@@ -69,12 +68,14 @@ public class ArticleService {
 
 	}
 
-	public void deleteAlone() {
+	public ResponseEntity<Void> deleteAlone() {
 		articleRepository.deleteAlone();
+		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
-	public void clearDatabase() {
+	public ResponseEntity<Void> clearDatabase() {
 		articleRepository.deleteAll();
+		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
 	public ResponseEntity<Long> delete(Article article) {

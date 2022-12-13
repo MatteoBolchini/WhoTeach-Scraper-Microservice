@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.whoteach.scraper.dto.ArticleDto;
-import it.whoteach.scraper.exception.RequiredFieldNullException;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.service.ArticleService;
 
@@ -98,14 +97,14 @@ public class ArticleController {
 
 	// elimina i nodi che non hanno relazioni
 	@DeleteMapping("/deleteAloneNodes")
-	public void deleteAloneNodes() {
-		articleService.deleteAlone();
+	public ResponseEntity<Void> deleteAloneNodes() {
+		return articleService.deleteAlone();
 	}
 
 	// svuota tutto il database
 	@DeleteMapping("/clear")
-	public void clear() {
-		articleService.clearDatabase();
+	public ResponseEntity<Void> clear() {
+		return articleService.clearDatabase();
 	}
 
 }
