@@ -85,7 +85,7 @@ public class ModelMapperConfig {
 	private Converter<ArticleDto, Article> articleConverterDto = context -> {
 		Article article;
 		if(context.getSource().getId() != null) { 
-			article = articleService.findById(context.getSource().getId());
+			article = articleService.getById(context.getSource().getId());
 		}
 		else {
 			if(context.getSource().getUrl() == null || context.getSource().getSource() == null)

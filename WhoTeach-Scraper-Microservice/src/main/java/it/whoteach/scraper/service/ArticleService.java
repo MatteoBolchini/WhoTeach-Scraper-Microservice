@@ -2,30 +2,50 @@ package it.whoteach.scraper.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import it.whoteach.scraper.exception.EntityNotFoundException;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.repository.ArticleRepository;
+import lombok.extern.java.Log;
 
+@Log
 @Service
 public class ArticleService {
 	@Autowired
 	private ArticleRepository articleRepository;
 	
-	public Article findById(Long id) {
-		return articleRepository.findById(id).orElseThrow(()-> 
-		new EntityNotFoundException(String.format("Article with id [%s] not found", id)));
+	public Article getById(Long id) {
+		return articleRepository.getById(id);
 	}
 	
-	public List<Article> findAllById(List<Long> ids) {
-		return articleRepository.findAllById(ids);
+	public ResponseEntity<Article> findById(Long id) {
+		if(articleRepository.existsById(id))
+			return new ResponseEntity<Article>(getById(id), HttpStatus.OK);
+		else {
+			return new ResponseEntity<Article>(HttpStatus.BAD_REQUEST);
+		}
 	}
-	
-	public List<Article> findAll() {
-		return articleRepository.findAll();
+
+	public ResponseEntity<List<Article>> findAllById(List<Long> ids) {
+		List<Article> list = new ArrayList<>();
+		for(Long id : ids) {
+			if(articleRepository.existsById(id))
+				list.add(getById(id));		
+			else {
+				log.log(Level.INFO, String.format("Article with id [%s] not found", id));
+			}
+		}
+		return new ResponseEntity<List<Article>>(list, HttpStatus.OK);
+	}
+
+	public ResponseEntity<List<Article>> findAll() {
+		return new ResponseEntity<List<Article>>(articleRepository.findAll(), HttpStatus.OK);	
 	}
 
 	public Article save(Article article) {
@@ -42,9 +62,11 @@ public class ArticleService {
 		return save(article);
 	}
 
-	public void deleteById(Long id) {
+	public ResponseEntity<Long> deleteById(Long id) {
 		articleRepository.deleteById(id);
 		deleteAlone();
+		return new ResponseEntity<Long>(id, HttpStatus.OK);
+
 	}
 
 	public void deleteAlone() {
@@ -55,7 +77,10 @@ public class ArticleService {
 		articleRepository.deleteAll();
 	}
 
-	public void delete(Article article) {
+	public ResponseEntity<Long> delete(Article article) {
+		Long id = article.getId();
 		articleRepository.delete(article);
+		return new ResponseEntity<Long>(id, HttpStatus.OK);
 	}
+
 }

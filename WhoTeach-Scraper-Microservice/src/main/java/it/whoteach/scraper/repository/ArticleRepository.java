@@ -8,8 +8,10 @@ import it.whoteach.scraper.pojo.Article;
 
 @Repository
 public interface ArticleRepository extends Neo4jRepository<Article, Long> {
-	@Query("MATCH (n) WHERE NOT (n)--() DELETE n")
+	@Query("match (n) where not (n)--() delete n")
 	void deleteAlone();
-	@Query("MATCH (n) WHERE ID(n) = $id DETACH DELETE n")
+	@Query("match (n) where ID (n) =$id detach delete n")
 	void clearById(Long id);
+	@Query("match(n)-[r]-(m) where ID (n) = $id return n,collect(r),collect(m)")
+	Article getById(Long id);
 }

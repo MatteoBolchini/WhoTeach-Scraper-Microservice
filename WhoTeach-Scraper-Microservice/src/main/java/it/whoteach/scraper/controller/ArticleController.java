@@ -32,72 +32,68 @@ public class ArticleController {
 
 	// ritorna la lista degli articoli
 	@GetMapping("/articles")
-	public List<Article> all() {
+	public ResponseEntity<List<Article>> all() {
 		return articleService.findAll();
 	}
 
 	// restituisce l'articolo con l'idItem specificato
 	@GetMapping("/get/{id}")
-	public Article singleByIdItem(@PathVariable Long id) {
+	public ResponseEntity<Article> getById(@PathVariable Long id) {
 		return articleService.findById(id);
 	}
 
 	// restituisce gli articoli con la lista di idItem specificata
 	@GetMapping("/getAll/{ids}") 
-	public List<Article> allByIdItem(@PathVariable List<Long> ids) {
+	public ResponseEntity<List<Article>> allById(@PathVariable List<Long> ids) {
 		return articleService.findAllById(ids);
 	}
 
 	// aggiunge un articolo definito in un Json
 	@PostMapping("/article")
-	public Long newArticle(@RequestBody ArticleDto article) {
-		return articleService.save(this.modelMapper.map(article, Article.class)).getId();
+	public ResponseEntity<Long> newArticle(@RequestBody ArticleDto article) {
+		return new ResponseEntity<Long>(articleService.save(this.modelMapper.map(article, Article.class)).getId(),
+				HttpStatus.OK);
 	}
 
 	// aggiunge gli articoli definiti in un JsonArray
 	@PostMapping("/articles")
-	public List<Long> newArticles(@RequestBody List<ArticleDto> articles) {
+	public ResponseEntity<List<Long>> newArticles(@RequestBody List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();
 		List<Article> articleList = modelMapper.map(articles, new TypeToken<List<Article>>() {}.getType());
 		articleService.saveAll(articleList);
 		for(Article a : articleList)
 			ids.add(a.getId());
-		return ids;
+		return new ResponseEntity<List<Long>>(ids, HttpStatus.OK);
 	}
 
-	// aggiorna l'articolo
+	// aggiorna l'articolo se è presente, altrimenti lo crea
 	@PutMapping("/update")
-	public Long update(@RequestBody ArticleDto article) {
-		if(article.getId() == null)
-			throw new RequiredFieldNullException("Id is mandatory for update");
-		return articleService.update(this.modelMapper.map(article, Article.class)).getId();
+	public ResponseEntity<Long> update(@RequestBody ArticleDto article) {
+		return new ResponseEntity<Long>(articleService.update(this.modelMapper.map(article, Article.class)).getId(),
+				HttpStatus.OK);
 	}
 
 	// aggiorna la lista degli articoli
 	@PutMapping("/updateAll")
-	public List<Long> updateAll(@RequestBody List<ArticleDto> articles) {
+	public ResponseEntity<List<Long>> updateAll(@RequestBody List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();
 		for(ArticleDto a : articles) {
-			if(a.getId() == null)
-				throw new RequiredFieldNullException("Id is mandatory for update");
-			else {
-				articleService.update(this.modelMapper.map(a, Article.class));
-				ids.add(a.getId());
-			}
+			Article art = articleService.update(this.modelMapper.map(a, Article.class));
+			ids.add(art.getId());
 		}	
-		return ids;
+		return new ResponseEntity<List<Long>>(ids, HttpStatus.OK);
 	}
 
 	// elimina un articolo
 	@DeleteMapping("/delete")
-	public void delete(@RequestBody Article article) {
-		articleService.delete(article);
+	public ResponseEntity<Long> delete(@RequestBody Article article) {
+		 return articleService.delete(article);
 	}
 
 	// elimina un articolo tramite id
 	@DeleteMapping("/delete/{id}") 
-	public void clearById(@PathVariable Long id) {
-		articleService.deleteById(id);
+	public ResponseEntity<Long> clearById(@PathVariable Long id) {
+		return articleService.deleteById(id);
 	}
 
 	// elimina i nodi che non hanno relazioni
@@ -111,5 +107,5 @@ public class ArticleController {
 	public void clear() {
 		articleService.clearDatabase();
 	}
-	
+
 }
