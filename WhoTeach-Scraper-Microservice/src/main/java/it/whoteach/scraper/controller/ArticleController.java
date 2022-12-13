@@ -29,32 +29,32 @@ public class ArticleController {
 	@Autowired
 	private ArticleService articleService;
 
-	// ritorna la lista degli articoli
+	// restituisce la lista degli articoli
 	@GetMapping("/articles")
 	public ResponseEntity<List<Article>> all() {
 		return articleService.findAll();
 	}
 
-	// restituisce l'articolo con l'idItem specificato
+	// restituisce l'articolo con l'id specificato
 	@GetMapping("/get/{id}")
 	public ResponseEntity<Article> getById(@PathVariable Long id) {
 		return articleService.findById(id);
 	}
 
-	// restituisce gli articoli con la lista di idItem specificata
+	// restituisce gli articoli con la lista di id specificata
 	@GetMapping("/getAll/{ids}") 
 	public ResponseEntity<List<Article>> allById(@PathVariable List<Long> ids) {
 		return articleService.findAllById(ids);
 	}
 
-	// aggiunge un articolo definito in un Json
+	// aggiunge un articolo 
 	@PostMapping("/article")
 	public ResponseEntity<Long> newArticle(@RequestBody ArticleDto article) {
 		return new ResponseEntity<Long>(articleService.save(this.modelMapper.map(article, Article.class)).getId(),
 				HttpStatus.OK);
 	}
 
-	// aggiunge gli articoli definiti in un JsonArray
+	// aggiunge gli articoli 
 	@PostMapping("/articles")
 	public ResponseEntity<List<Long>> newArticles(@RequestBody List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();
@@ -65,14 +65,14 @@ public class ArticleController {
 		return new ResponseEntity<List<Long>>(ids, HttpStatus.OK);
 	}
 
-	// aggiorna l'articolo se è presente, altrimenti lo crea
+	// aggiorna l'articolo se è già presente, altrimenti lo crea
 	@PutMapping("/update")
 	public ResponseEntity<Long> update(@RequestBody ArticleDto article) {
 		return new ResponseEntity<Long>(articleService.update(this.modelMapper.map(article, Article.class)).getId(),
 				HttpStatus.OK);
 	}
 
-	// aggiorna la lista degli articoli
+	// aggiorna la lista degli articoli, quelli non presenti li crea
 	@PutMapping("/updateAll")
 	public ResponseEntity<List<Long>> updateAll(@RequestBody List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();

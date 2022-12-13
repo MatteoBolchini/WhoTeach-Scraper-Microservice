@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.opencsv.bean.CsvBindAndSplitByName;
 import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvCustomBindByName;
 import com.opencsv.bean.CsvRecurse;
 
 import it.whoteach.scraper.csvConverter.TextToAuthorDto;

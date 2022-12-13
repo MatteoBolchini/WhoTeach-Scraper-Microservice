@@ -65,7 +65,6 @@ public class ArticleService {
 		articleRepository.deleteById(id);
 		deleteAlone();
 		return new ResponseEntity<Long>(id, HttpStatus.OK);
-
 	}
 
 	public ResponseEntity<Void> deleteAlone() {

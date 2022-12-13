@@ -92,6 +92,7 @@ public class ModelMapperConfig {
 				throw new RequiredFieldNullException("Url and Source are mandatory");
 			article = new Article();
 		}
+		
 		if(context.getSource().getUrl() != null) {
 			Pattern p = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
 			Matcher m = p.matcher(context.getSource().getUrl());
@@ -203,7 +204,6 @@ public class ModelMapperConfig {
 		if(context.getSource().getUploadDate() != null 
 				&& context.getSource().getUploadDate().getUploadDate() != null
 				&& !context.getSource().getUploadDate().getUploadDate().isEmpty()) { 
-			// oppure \\d{2}/\\d{2}/\\d{4}
 			Pattern p = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{4}");
 			Matcher m = p.matcher(context.getSource().getUploadDate().getUploadDate());
 			if(m.matches()) 
@@ -243,7 +243,7 @@ public class ModelMapperConfig {
 				&& !context.getSource().getFormat().getFormat().isEmpty()) { 
 			article.setFormat(modelMapper.map(context.getSource().getFormat(), Format.class));
 		}
-		
+
 		return article;
 	};
 
@@ -256,7 +256,7 @@ public class ModelMapperConfig {
 		Description description = new Description(context.getSource().getDescription());
 		return description;
 	};
-	
+
 	private Converter<DestinationPublicDto, DestinationPublic> destinationPublicConverterDto = context -> {
 		DestinationPublic cestinationPublic = new DestinationPublic(context.getSource().getDestinationPublic());
 		return cestinationPublic;
@@ -271,7 +271,7 @@ public class ModelMapperConfig {
 		Domain domain = new Domain(context.getSource().getDomain());
 		return domain;
 	};
-	
+
 	private Converter<DurationDto, Duration> durationConverterDto = context -> {
 		Duration duration = new Duration(context.getSource().getDuration());
 		return duration;
@@ -281,7 +281,7 @@ public class ModelMapperConfig {
 		Format format = new Format(context.getSource().getFormat());
 		return format;
 	};
-	
+
 	private Converter<KeywordDto, Keyword> keywordConverterDto = context -> {
 		Keyword keyword = new Keyword(context.getSource().getKeywords());
 		return keyword;
@@ -291,12 +291,12 @@ public class ModelMapperConfig {
 		Language language = new Language(context.getSource().getLanguage());
 		return language;
 	};
-	
+
 	private Converter<MaxAgeDto, MaxAge> maxAgeConverterDto = context -> {
 		MaxAge maxAge = new MaxAge(context.getSource().getMaxAge());
 		return maxAge;
 	};
-	
+
 	private Converter<MinAgeDto, MinAge> minAgeConverterDto = context -> {
 		MinAge minAge = new MinAge(context.getSource().getMinAge());
 		return minAge;
@@ -326,5 +326,5 @@ public class ModelMapperConfig {
 		UploadDate uploadDate = new UploadDate(context.getSource().getUploadDate());
 		return uploadDate;
 	};
-	
+
 }
