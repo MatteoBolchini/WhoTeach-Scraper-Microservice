@@ -34,6 +34,10 @@ public class GoogleCloudConnector {
 	private String bucketname;
 	private Storage storage;
 
+	/*
+	 * @throws a BadRequestException if it is not able to create the Google Credentials
+	 * @return the Storage specified
+	 */
 	public Storage getStorage() throws BadRequestException {
 		if (this.storage != null) {
 			return this.storage;
@@ -49,7 +53,11 @@ public class GoogleCloudConnector {
 		}
 		return this.storage;
 	}
-
+	
+	/*
+	 * @param fileName name of the csv to read
+	 * @return a list of ArticleDtos
+	 */
 	public List<ArticleDto> retrieveCsv(String fileName) {
 		Blob blob = getStorage().get(BlobId.of(bucketname, fileName));
 		ReadChannel readChannel = blob.reader();

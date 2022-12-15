@@ -31,32 +31,46 @@ public class ArticleController {
 	@Autowired
 	private ArticleService articleService;
 
-	// restituisce la lista degli articoli
+	/*
+	 * @return the list of all articles
+	 */
 	@GetMapping("/articles")
 	public ResponseEntity<List<Article>> all() {
 		return articleService.findAll();
 	}
 
-	// restituisce l'articolo con l'id specificato
+	/*
+	 * @param id the article's id
+	 * @return the article specified by the id
+	 */
 	@GetMapping("/get/{id}")
 	public ResponseEntity<Article> getById(@PathVariable Long id) {
 		return articleService.findById(id);
 	}
-
-	// restituisce gli articoli con la lista di id specificata
+	
+	/*
+	 * @param ids the list of the articles's id
+	 * @return the list of articles specified by the ids
+	 */
 	@GetMapping("/getAll/{ids}") 
 	public ResponseEntity<List<Article>> allById(@PathVariable List<Long> ids) {
 		return articleService.findAllById(ids);
 	}
 
-	// aggiunge un articolo 
+	/*
+	 * @param article the ArticleDto (che deve essere convertito in articolo e aggiunto al db)
+	 * @return the added article's id
+	 */
 	@PostMapping("/article")
 	public ResponseEntity<Long> newArticle(@RequestBody ArticleDto article) {
 		return new ResponseEntity<Long>(articleService.save(this.modelMapper.map(article, Article.class)).getId(),
 				HttpStatus.OK);
 	}
 
-	// aggiunge gli articoli 
+	/*
+	 * @param articles the list of ArticleDtos (stesso di sopra)
+	 * @return the list of added article's id
+	 */
 	@PostMapping("/articles")
 	public ResponseEntity<List<Long>> newArticles(@RequestBody List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();
@@ -67,14 +81,20 @@ public class ArticleController {
 		return new ResponseEntity<List<Long>>(ids, HttpStatus.OK);
 	}
 
-	// aggiorna l'articolo se è già presente, altrimenti lo crea
+	/*
+	 * @param article the ArticleDto (da convertire per aggiornare)
+	 * @return the upgraded article's id
+	 */
 	@PutMapping("/update")
 	public ResponseEntity<Long> update(@RequestBody ArticleDto article) {
 		return new ResponseEntity<Long>(articleService.update(this.modelMapper.map(article, Article.class)).getId(),
 				HttpStatus.OK);
 	}
 
-	// aggiorna la lista degli articoli, quelli non presenti li crea
+	/*
+	 * @param articles the list of article (same)
+	 * @return the list of upgraded articles's id
+	 */
 	@PutMapping("/updateAll")
 	public ResponseEntity<List<Long>> updateAll(@RequestBody List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();

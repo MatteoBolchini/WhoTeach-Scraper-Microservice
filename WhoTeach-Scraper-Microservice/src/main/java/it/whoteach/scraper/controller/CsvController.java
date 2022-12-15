@@ -33,9 +33,12 @@ public class CsvController {
 		csvService.csvToArticle(fileName);
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
-	
-	@PostMapping("/getBlob/{fileName}")
-	public ResponseEntity<Void> getBlob(@PathVariable String fileName) {
+	/*
+	 * @param fileName The bucket's name
+	 * @return the status of the called method
+	 */
+	@PostMapping("/post-bucket/{fileName}")
+	public ResponseEntity<Void> postFromBucket(@PathVariable String fileName) {
 		if(fileName == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		csvService.retrieveCsv(fileName);
