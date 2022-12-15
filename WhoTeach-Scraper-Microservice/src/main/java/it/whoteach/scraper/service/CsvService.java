@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.opencsv.bean.CsvToBeanBuilder;
 
-import it.whoteach.connector.GoogleCloudConnector;
+import it.whoteach.scraper.connector.GoogleCloudConnector;
 import it.whoteach.scraper.dto.ArticleDto;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.repository.ArticleRepository;
@@ -27,6 +27,9 @@ public class CsvService {
 
 	@Autowired
 	ModelMapper modelMapper;
+	
+	@Autowired
+	GoogleCloudConnector googleCloudConnector;
 	
 	public void csvToArticle(String fileName) {
 		try {
@@ -46,5 +49,13 @@ public class CsvService {
 			e.printStackTrace();
 		}	
 	}
+
+	public void retrieveCsv(String fileName) {
+		for(ArticleDto a : googleCloudConnector.retrieveCsv(fileName)) {
+			articleRepository.save(this.modelMapper.map(a, Article.class));
+		}
+	}
+	
+	
 
 }

@@ -1,17 +1,17 @@
-package it.whoteach.scraper.csvConverter;
+package it.whoteach.scraper.utils;
 
 import com.opencsv.bean.AbstractCsvConverter;
 import com.opencsv.exceptions.CsvConstraintViolationException;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 
-import it.whoteach.scraper.dto.DestinationPublicDto;
+import it.whoteach.scraper.dto.SubdomainDto;
 
-public class TextToDestinationPublicDto extends AbstractCsvConverter {
+public class TextToSubdomainDto extends AbstractCsvConverter {
 
 	@Override
 	public Object convertToRead(String value) throws CsvDataTypeMismatchException, CsvConstraintViolationException {
-		DestinationPublicDto d = new DestinationPublicDto(value);
-		return d;
+		SubdomainDto s = new SubdomainDto(value);
+		return s;
 	}
 
 }

@@ -1,4 +1,4 @@
-package it.whoteach.connector;
+package it.whoteach.scraper.connector;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -7,15 +7,11 @@ import java.nio.channels.Channels;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.ReadChannel;
-import com.google.cloud.secretmanager.v1.Secret;
-import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
-import com.google.cloud.secretmanager.v1.SecretName;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
@@ -24,20 +20,18 @@ import com.opencsv.bean.CsvToBeanBuilder;
 
 import it.whoteach.scraper.dto.ArticleDto;
 import it.whoteach.scraper.exception.BadRequestException;
-import it.whoteach.scraper.pojo.Article;
-import it.whoteach.scraper.repository.ArticleRepository;
 
 @Service
 public class GoogleCloudConnector {
-
-	@Autowired
-	ArticleRepository articleRepository;
-
-	@Autowired
-	ModelMapper modelMapper;
-
+	
+	private GoogleCloudConnector() {}
+	
+	@Value("${whoteach.cloudstorage.sa}")
 	private String serviceAccount;
+	@Value("${whoteach.cloudstorage.scope}")
 	private List<String> scope;
+	@Value("${whoteach.cloudstorage.bucket-name}")
+	private String bucketname;
 	private Storage storage;
 
 	public Storage getStorage() throws BadRequestException {
@@ -56,16 +50,8 @@ public class GoogleCloudConnector {
 		return this.storage;
 	}
 
-	public void getSecret() throws IOException {
-		try (SecretManagerServiceClient client = SecretManagerServiceClient.create()) {
-			SecretName secretName = SecretName.of("neo4j-project-dev", "testing");
-			Secret secret = client.getSecret(secretName); // permission denied
-			System.out.printf("Secret %s", secret.getName());
-		}
-	}
-
-	public void retrieveCsv(String fileName) {
-		Blob blob = getStorage().get(BlobId.of("test-bucket-csv-to-neo4j-1", fileName));
+	public List<ArticleDto> retrieveCsv(String fileName) {
+		Blob blob = getStorage().get(BlobId.of(bucketname, fileName));
 		ReadChannel readChannel = blob.reader();
 		List<ArticleDto> articles = new CsvToBeanBuilder<ArticleDto>(Channels.newReader(readChannel, "UTF-8"))
 				.withSeparator(';')
@@ -73,8 +59,6 @@ public class GoogleCloudConnector {
 				.withType(ArticleDto.class)
 				.build()
 				.parse();
-		for(ArticleDto a : articles) {
-			articleRepository.save(this.modelMapper.map(a, Article.class));
-		}
+		return articles;
 	}
 }

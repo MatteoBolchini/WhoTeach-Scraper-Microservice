@@ -1,4 +1,4 @@
-package it.whoteach.scraper.csvConverter;
+package it.whoteach.scraper.utils;
 
 import com.opencsv.bean.AbstractCsvConverter;
 import com.opencsv.exceptions.CsvConstraintViolationException;

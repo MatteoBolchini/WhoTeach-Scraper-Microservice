@@ -6,10 +6,10 @@ import com.opencsv.bean.CsvBindAndSplitByName;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvRecurse;
 
-import it.whoteach.scraper.csvConverter.TextToAuthorDto;
-import it.whoteach.scraper.csvConverter.TextToDestinationPublicDto;
-import it.whoteach.scraper.csvConverter.TextToKeywordDto;
-import it.whoteach.scraper.csvConverter.TextToSubdomainDto;
+import it.whoteach.scraper.utils.TextToAuthorDto;
+import it.whoteach.scraper.utils.TextToDestinationPublicDto;
+import it.whoteach.scraper.utils.TextToKeywordDto;
+import it.whoteach.scraper.utils.TextToSubdomainDto;
 import lombok.Getter;
 import lombok.Setter;
 
