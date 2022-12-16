@@ -17,7 +17,6 @@ import lombok.Setter;
 @Setter
 public class ArticleDto {
 	
-	@CsvBindByName(column = "id", required = false)
 	private Long id;
 	@CsvBindByName(column = "URI")
 	private String url;

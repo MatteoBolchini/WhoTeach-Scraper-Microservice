@@ -82,15 +82,28 @@ public class ModelMapperConfig {
 		return modelMapper;
 	}
 
+	// se si vuole continuare l'esecuzione, si loggano le exception e si ritorna null, cambiando opportunamente i metodi che usano i suoi return
 	private Converter<ArticleDto, Article> articleConverterDto = context -> {
 		Article article;
-		if(context.getSource().getId() != null) { 
+		/*if(context.getSource().getId() != null) { 
 			article = articleService.getById(context.getSource().getId());
 		}
 		else {
 			if(context.getSource().getUrl() == null || context.getSource().getSource() == null)
 				throw new RequiredFieldNullException("Url and Source are mandatory");
 			article = new Article();
+		}*/
+		if(context.getSource().getUrl() == null) {
+			throw new RequiredFieldNullException("Url is mandatory");
+		}
+		else {
+			if(articleService.existsByUrl(context.getSource().getUrl()))
+				article = articleService.getByUrl(context.getSource().getUrl());
+			else {
+				if(context.getSource().getSource() == null)
+					throw new RequiredFieldNullException("Source is mandatory");
+				article = new Article();
+			}
 		}
 		
 		if(context.getSource().getUrl() != null) {
@@ -99,7 +112,7 @@ public class ModelMapperConfig {
 			if(m.matches())
 				article.setUrl(context.getSource().getUrl());
 			else {
-				throw new RequiredFieldNullException("Url is mandatory");
+				throw new RequiredFieldNullException("Url is mandatory, this one has an invalid format");
 			}
 		}
 		if(context.getSource().getSource() != null) { 
@@ -152,8 +165,8 @@ public class ModelMapperConfig {
 			if(m1.matches() || m2.matches())
 				article.setDuration(modelMapper.map(context.getSource().getDuration(), Duration.class));
 			else {
-				log.log(Level.INFO, "In article " + context.getSource().getId() 
-						+ " Duration was invalid, it was considered null");
+				log.log(Level.INFO, "In article " + context.getSource().getUrl() 
+						+ " Duration was invalid, it was considered null"); // context.getSource().getId()
 			}
 		}
 
@@ -183,21 +196,21 @@ public class ModelMapperConfig {
 			if(m.matches())
 				article.setMaxAge(modelMapper.map(context.getSource().getMaxAge(), MaxAge.class));
 			else { 
-				log.log(Level.INFO, "In article " + context.getSource().getId() 
-						+ " MaxAge was invalid, it was considered null");
+				log.log(Level.INFO, "In article " + context.getSource().getUrl() 
+						+ " MaxAge was invalid, it was considered null"); // context.getSource().getId()
 			}
 		}
 
 		if(context.getSource().getMinAge() != null 
 				&& context.getSource().getMinAge().getMinAge() != null
 				&& !context.getSource().getMinAge().getMinAge().isEmpty()) { 
-			Pattern p = Pattern.compile("[0-9]{1,3}");
+			Pattern p = Pattern.compile("[0-9]{1,2}");
 			Matcher m = p.matcher(context.getSource().getMinAge().getMinAge());
 			if(m.matches())
 				article.setMinAge(modelMapper.map(context.getSource().getMinAge(), MinAge.class));
 			else {
-				log.log(Level.INFO, "In article " + context.getSource().getId() 
-						+ " MinAge was invalid, it was considered null");
+				log.log(Level.INFO, "In article " + context.getSource().getUrl() 
+						+ " MinAge was invalid, it was considered null"); // context.getSource().getId()
 			}
 		}
 
@@ -209,8 +222,8 @@ public class ModelMapperConfig {
 			if(m.matches()) 
 				article.setUploadDate(modelMapper.map(context.getSource().getUploadDate(), UploadDate.class));
 			else {
-				log.log(Level.INFO, "In article " + context.getSource().getId() 
-						+ " UploadDate was invalid, it was considered null");
+				log.log(Level.INFO, "In article " + context.getSource().getUrl() 
+						+ " UploadDate was invalid, it was considered null"); // context.getSource().getId()
 			}
 		}
 

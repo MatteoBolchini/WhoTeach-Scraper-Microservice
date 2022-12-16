@@ -23,6 +23,14 @@ public class ArticleService {
 		return articleRepository.getById(id);
 	}
 	
+	public Article getByUrl(String url) {
+		return articleRepository.getByUrl(url);
+	}
+	
+	public boolean existsByUrl(String url) {
+		return articleRepository.existsByUrl(url);
+	}
+	
 	public ResponseEntity<Article> findById(Long id) {
 		if(articleRepository.existsById(id))
 			return new ResponseEntity<Article>(getById(id), HttpStatus.OK);
@@ -70,17 +78,6 @@ public class ArticleService {
 	public ResponseEntity<Void> deleteAlone() {
 		articleRepository.deleteAlone();
 		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
-
-	public ResponseEntity<Void> clearDatabase() {
-		articleRepository.deleteAll();
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
-
-	public ResponseEntity<Long> delete(Article article) {
-		Long id = article.getId();
-		articleRepository.delete(article);
-		return new ResponseEntity<Long>(id, HttpStatus.OK);
 	}
 
 }

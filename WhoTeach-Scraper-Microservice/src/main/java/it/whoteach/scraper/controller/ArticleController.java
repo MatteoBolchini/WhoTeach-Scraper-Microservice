@@ -31,7 +31,9 @@ public class ArticleController {
 	@Autowired
 	private ArticleService articleService;
 
-	/*
+	/**
+	 * get all articles in the database
+	 * 
 	 * @return the list of all articles
 	 */
 	@GetMapping("/articles")
@@ -39,7 +41,9 @@ public class ArticleController {
 		return articleService.findAll();
 	}
 
-	/*
+	/**
+	 * get the article by his id
+	 * 
 	 * @param id the article's id
 	 * @return the article specified by the id
 	 */
@@ -48,7 +52,9 @@ public class ArticleController {
 		return articleService.findById(id);
 	}
 	
-	/*
+	/**
+	 * get all articles by their id
+	 * 
 	 * @param ids the list of the articles's id
 	 * @return the list of articles specified by the ids
 	 */
@@ -57,8 +63,10 @@ public class ArticleController {
 		return articleService.findAllById(ids);
 	}
 
-	/*
-	 * @param article the ArticleDto (che deve essere convertito in articolo e aggiunto al db)
+	/**
+	 * insert the article in the database
+	 * 
+	 * @param article the article to be added to the database
 	 * @return the added article's id
 	 */
 	@PostMapping("/article")
@@ -67,8 +75,10 @@ public class ArticleController {
 				HttpStatus.OK);
 	}
 
-	/*
-	 * @param articles the list of ArticleDtos (stesso di sopra)
+	/**
+	 * insert all articles in the database
+	 * 
+	 * @param articles the list of articles to be added to the database
 	 * @return the list of added article's id
 	 */
 	@PostMapping("/articles")
@@ -81,7 +91,9 @@ public class ArticleController {
 		return new ResponseEntity<List<Long>>(ids, HttpStatus.OK);
 	}
 
-	/*
+	/**
+	 * update the article in the database
+	 * 
 	 * @param article the ArticleDto (da convertire per aggiornare)
 	 * @return the upgraded article's id
 	 */
@@ -91,7 +103,9 @@ public class ArticleController {
 				HttpStatus.OK);
 	}
 
-	/*
+	/**
+	 * update all articles in the database
+	 * 
 	 * @param articles the list of article (same)
 	 * @return the list of upgraded articles's id
 	 */
@@ -105,28 +119,25 @@ public class ArticleController {
 		return new ResponseEntity<List<Long>>(ids, HttpStatus.OK);
 	}
 
-	// elimina un articolo
-	@DeleteMapping("/delete")
-	public ResponseEntity<Long> delete(@RequestBody Article article) {
-		 return articleService.delete(article);
-	}
-
-	// elimina un articolo tramite id
+	/**
+	 * delete the article by the given id
+	 * 
+	 * @param id the article's id 
+	 * @return the deleted article's id
+	 */
 	@DeleteMapping("/delete/{id}") 
 	public ResponseEntity<Long> clearById(@PathVariable Long id) {
 		return articleService.deleteById(id);
 	}
 
-	// elimina i nodi che non hanno relazioni
+	/**
+	 * delete all nodes without any relation
+	 * 
+	 * @return the status of the method called
+	 */
 	@DeleteMapping("/deleteAloneNodes")
 	public ResponseEntity<Void> deleteAloneNodes() {
 		return articleService.deleteAlone();
-	}
-
-	// svuota tutto il database
-	@DeleteMapping("/clear")
-	public ResponseEntity<Void> clear() {
-		return articleService.clearDatabase();
 	}
 
 }

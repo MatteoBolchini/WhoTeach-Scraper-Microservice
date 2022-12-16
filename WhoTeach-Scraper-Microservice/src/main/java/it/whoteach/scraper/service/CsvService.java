@@ -49,13 +49,12 @@ public class CsvService {
 			e.printStackTrace();
 		}	
 	}
-
+	
+	// posso mettere come ritorno la lista degli id degli articoli creati
 	public void retrieveCsv(String fileName) {
 		for(ArticleDto a : googleCloudConnector.retrieveCsv(fileName)) {
 			articleRepository.save(this.modelMapper.map(a, Article.class));
 		}
 	}
 	
-	
-
 }

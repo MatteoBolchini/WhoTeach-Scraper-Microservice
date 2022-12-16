@@ -14,4 +14,7 @@ public interface ArticleRepository extends Neo4jRepository<Article, Long> {
 	void clearById(Long id);
 	@Query("match(n)-[r]-(m) where ID (n) = $id return n,collect(r),collect(m)")
 	Article getById(Long id);
+	@Query("match(n)-[r]-(m) where n.url = $url return n,collect(r),collect(m)")
+	Article getByUrl(String url);
+	boolean existsByUrl(String url);
 }
