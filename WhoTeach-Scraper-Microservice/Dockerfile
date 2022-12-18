@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk17:alpine-jre
+FROM openjdk:17-alpine
 
 # https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/
 RUN apk add dumb-init
