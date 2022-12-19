@@ -133,7 +133,7 @@ public class ArticleController {
 	/**
 	 * delete all nodes without any relation
 	 * 
-	 * @return the status of the method called
+	 * @return the Http status
 	 */
 	@DeleteMapping("/deleteAloneNodes")
 	public ResponseEntity<Void> deleteAloneNodes() {

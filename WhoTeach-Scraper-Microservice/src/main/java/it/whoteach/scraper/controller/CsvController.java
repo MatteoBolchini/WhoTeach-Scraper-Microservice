@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import it.whoteach.scraper.service.CsvService;
 
 @RestController
@@ -18,31 +20,17 @@ public class CsvController {
 	@Autowired
 	CsvService csvService;	
 	
-	// for local test porpuse
-	@PostMapping("/read-bucket/{fileName}")
-	public ResponseEntity<Void> readFromBucket(@PathVariable String fileName) {
-		if(fileName == null)
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		csvService.csvToArticle(fileName);
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
-	
-	// for local test porpuse
-	@PutMapping("/update-bucket/{fileName}")
-	public ResponseEntity<Void> updateFromBucket(@PathVariable String fileName) {
-		if(fileName == null)
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		csvService.csvToArticle(fileName);
-		return new ResponseEntity<>(HttpStatus.OK); 
-	}
 	/**
 	 * insert the articles from the csv file to the database
 	 * 
 	 * @param fileName The bucket's name
-	 * @return the status of the called method
+	 * @return the Http status
 	 */
+	@ApiOperation(value = "Creates new articles in the database from a csv file contained in the bucket",
+			notes = "If one article is invalid, the operation stops and nothing get posted into the database")
 	@PostMapping("/post-bucket/{fileName}")
-	public ResponseEntity<Void> postFromBucket(@PathVariable String fileName) {
+	public ResponseEntity<Void> postFromBucket(@ApiParam(value = "Name of the csv file", required = true) 
+	@PathVariable String fileName) {
 		if(fileName == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		csvService.retrieveCsv(fileName);
@@ -53,10 +41,14 @@ public class CsvController {
 	 * update the articles from the csv file to the database
 	 * 
 	 * @param fileName The bucket's name
-	 * @return the status of the called method
+	 * @return the Http status
 	 */
+	@ApiOperation(value = "Creates new articles if their Url is not present in the database yet, "
+			+ "otherwise it updates them.",
+			notes = "If one article is invalid, the operation stops and nothing get put into the database")
 	@PutMapping("/put-bucket/{fileName}")
-	public ResponseEntity<Void> putFromBucket(@PathVariable String fileName) {
+	public ResponseEntity<Void> putFromBucket(@ApiParam(value = "Name of the csv file", required = true) 
+	@PathVariable String fileName) {
 		return postFromBucket(fileName);
 	}
 	
