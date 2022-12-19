@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import it.whoteach.scraper.dto.ArticleDto;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.service.ArticleService;
@@ -36,6 +38,9 @@ public class ArticleController {
 	 * 
 	 * @return the list of all articles
 	 */
+	@ApiOperation(value = "Get the list of all articles in the database", 
+			response = Article.class, 
+			responseContainer = "List")
 	@GetMapping("/articles")
 	public ResponseEntity<List<Article>> all() {
 		return articleService.findAll();
@@ -47,8 +52,12 @@ public class ArticleController {
 	 * @param id the article's id
 	 * @return the article specified by the id
 	 */
+	@ApiOperation(value = "Get the article specified by the id given",
+			response = Article.class)
 	@GetMapping("/get/{id}")
-	public ResponseEntity<Article> getById(@PathVariable Long id) {
+	public ResponseEntity<Article> getById(@ApiParam(value = "ID of the article", 
+	required = true) 
+	@PathVariable Long id) {
 		return articleService.findById(id);
 	}
 	
@@ -56,10 +65,16 @@ public class ArticleController {
 	 * get all articles by their id
 	 * 
 	 * @param ids the list of the articles's id
-	 * @return the list of articles specified by the ids
+	 * @return the list of articles specified by their id
 	 */
+	@ApiOperation(value = "Get the list of articles specified by their id",
+			notes = "If the id is not found in the persistence store it is silentily ignored",
+			response = Article.class, 
+			responseContainer = "List")
 	@GetMapping("/getAll/{ids}") 
-	public ResponseEntity<List<Article>> allById(@PathVariable List<Long> ids) {
+	public ResponseEntity<List<Article>> allById(@ApiParam(value = "IDs of the articles", 
+	required = true)
+	@PathVariable List<Long> ids) {
 		return articleService.findAllById(ids);
 	}
 
@@ -69,8 +84,13 @@ public class ArticleController {
 	 * @param article the article to be added to the database
 	 * @return the added article's id
 	 */
+	@ApiOperation(value = "Post the article in the database", 
+			notes = "Receives an ArticleDto, checks it and creates an Article if it is a valid ArticleDto",
+			response = Long.class)
 	@PostMapping("/article")
-	public ResponseEntity<Long> newArticle(@RequestBody ArticleDto article) {
+	public ResponseEntity<Long> newArticle(@ApiParam(value = "ArticleDto to post", 
+	required = true) 
+	@RequestBody ArticleDto article) {
 		return new ResponseEntity<Long>(articleService.save(this.modelMapper.map(article, Article.class)).getId(),
 				HttpStatus.OK);
 	}
@@ -81,8 +101,14 @@ public class ArticleController {
 	 * @param articles the list of articles to be added to the database
 	 * @return the list of added article's id
 	 */
+	@ApiOperation(value = "Post the articles in the database", 
+			notes = "Receives a list of ArticleDto, checks them and creates an Article from each valid ArticleDto",
+			response = Long.class,
+			responseContainer = "List")
 	@PostMapping("/articles")
-	public ResponseEntity<List<Long>> newArticles(@RequestBody List<ArticleDto> articles) {
+	public ResponseEntity<List<Long>> newArticles(@ApiParam(value = "List of ArticleDto to post", 
+	required = true) 
+	@RequestBody List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();
 		List<Article> articleList = modelMapper.map(articles, new TypeToken<List<Article>>() {}.getType());
 		articleService.saveAll(articleList);
@@ -97,8 +123,14 @@ public class ArticleController {
 	 * @param article the ArticleDto (da convertire per aggiornare)
 	 * @return the upgraded article's id
 	 */
+	
+	@ApiOperation(value = "Put the article in the database", 
+			notes = "Receives an ArticleDto, checks it and updates or creates an Article if it is a valid ArticleDto",
+			response = Long.class)
 	@PutMapping("/update")
-	public ResponseEntity<Long> update(@RequestBody ArticleDto article) {
+	public ResponseEntity<Long> update(@ApiParam(value = "ArticleDto to put", 
+	required = true) 
+	@RequestBody ArticleDto article) {
 		return new ResponseEntity<Long>(articleService.update(this.modelMapper.map(article, Article.class)).getId(),
 				HttpStatus.OK);
 	}
@@ -109,8 +141,14 @@ public class ArticleController {
 	 * @param articles the list of article (same)
 	 * @return the list of upgraded articles's id
 	 */
+	@ApiOperation(value = "Put the article in the database", 
+			notes = "Receives a list of ArticleDto, checks them and updates or creates an Article from each valid ArticleDto",
+			response = Long.class,
+			responseContainer = "List")
 	@PutMapping("/updateAll")
-	public ResponseEntity<List<Long>> updateAll(@RequestBody List<ArticleDto> articles) {
+	public ResponseEntity<List<Long>> updateAll(@ApiParam(value = "List of ArticleDtos to post", 
+			required = true) 
+	@RequestBody List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();
 		for(ArticleDto a : articles) {
 			Article art = articleService.update(this.modelMapper.map(a, Article.class));
@@ -125,19 +163,12 @@ public class ArticleController {
 	 * @param id the article's id 
 	 * @return the deleted article's id
 	 */
+	@ApiOperation(value = "Delete the article by his id", 
+			notes = "If the id is not found in the persistence store it is silentily ignored",
+			response = Long.class)
 	@DeleteMapping("/delete/{id}") 
 	public ResponseEntity<Long> clearById(@PathVariable Long id) {
 		return articleService.deleteById(id);
-	}
-
-	/**
-	 * delete all nodes without any relation
-	 * 
-	 * @return the Http status
-	 */
-	@DeleteMapping("/deleteAloneNodes")
-	public ResponseEntity<Void> deleteAloneNodes() {
-		return articleService.deleteAlone();
 	}
 
 }

@@ -34,7 +34,7 @@ public class GoogleCloudConnector {
 	private String bucketname;
 	private Storage storage;
 
-	/*
+	/**
 	 * @throws a BadRequestException if it is not able to create the Google Credentials
 	 * @return the Storage specified
 	 */
@@ -54,7 +54,7 @@ public class GoogleCloudConnector {
 		return this.storage;
 	}
 	
-	/*
+	/**
 	 * @param fileName name of the csv to read
 	 * @return a list of ArticleDtos
 	 */
