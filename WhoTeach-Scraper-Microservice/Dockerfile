@@ -1,14 +1,6 @@
-FROM openjdk:17-alpine
-
-# https://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/
-RUN apk add dumb-init
-RUN mkdir -p /opt/app/data
-
-COPY target/*.jar /opt/app/app.jar
-
-RUN addgroup --system javauser && adduser -S -s /bin/false -G javauser javauser
-RUN chown -R javauser:javauser /opt/app
-USER javauser
-WORKDIR /opt/app
+FROM openjdk:17
+WORKDIR /app
+COPY ./ ./
+RUN ./mvnw dependency:resolve
 EXPOSE 8080
-CMD "dumb-init" "java" "-jar" "app.jar"
+CMD ["java", "--enable-preview", "-jar", "target/WhoTeach-Scraper-Microservice-0.0.1.jar"]
