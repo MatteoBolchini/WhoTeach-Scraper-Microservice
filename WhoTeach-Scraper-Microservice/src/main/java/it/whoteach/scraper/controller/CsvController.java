@@ -1,5 +1,7 @@
 package it.whoteach.scraper.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +11,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import it.whoteach.scraper.service.CsvService;
 
 @RestController
@@ -26,15 +28,16 @@ public class CsvController {
 	 * @param fileName The bucket's name
 	 * @return the Http status
 	 */
-	@ApiOperation(value = "Creates new articles in the database from a csv file contained in the bucket",
-			notes = "If one article is invalid, the operation stops and nothing get posted into the database")
+	@Operation(summary = "Creates new articles in the database",
+			description = "If one article is invalid (wrong arguments or inserted yet) "
+					+ "it is logged and the operation continues")
 	@PostMapping("/post-bucket/{fileName}")
-	public ResponseEntity<Void> postFromBucket(@ApiParam(value = "Name of the csv file", required = true) 
+	public ResponseEntity<List<Long>> postFromBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
 	@PathVariable String fileName) {
 		if(fileName == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		csvService.retrieveCsv(fileName);
-		return new ResponseEntity<>(HttpStatus.OK);
+		List<Long> ids = csvService.saveCsv(fileName);
+		return new ResponseEntity<>(ids, HttpStatus.OK);
 	}
 	
 	/**
@@ -43,13 +46,17 @@ public class CsvController {
 	 * @param fileName The bucket's name
 	 * @return the Http status
 	 */
-	@ApiOperation(value = "Creates new articles if their Url is not present in the database yet, "
+	@Operation(summary = "Creates new articles if their Url is not present in the database yet, "
 			+ "otherwise it updates them.",
-			notes = "If one article is invalid, the operation stops and nothing get put into the database")
+			description = "If one article is invalid (wrong arguments), "
+					+ "it is logged and the operation continues")
 	@PutMapping("/put-bucket/{fileName}")
-	public ResponseEntity<Void> putFromBucket(@ApiParam(value = "Name of the csv file", required = true) 
+	public ResponseEntity<List<Long>> putFromBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
 	@PathVariable String fileName) {
-		return postFromBucket(fileName);
+		if(fileName == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		List<Long> ids = csvService.updateCsv(fileName);
+		return new ResponseEntity<>(ids, HttpStatus.OK);
 	}
 	
 }

@@ -19,10 +19,10 @@ public class OpenAPIConfiguration {
     @Bean
     public OpenAPI openAPI() {
     	return new OpenAPI()
-                .addServersItem(new Server().url(url)) //TODO aggiungere autenticazione
+                .addServersItem(new Server().url(url))
                 .info(new Info()
-                        .title("Micro test")
-                        .description("Service")
+                        .title("WhoTeach Scraper Microservice")
+                        .description("Those are REST API to interrogate a Neo4j Aura DB")
                         .version("0.0.1"))
                 .components(new Components()
                        .addSecuritySchemes("basicScheme",
