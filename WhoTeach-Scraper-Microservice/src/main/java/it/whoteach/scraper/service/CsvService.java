@@ -6,6 +6,8 @@ import java.util.logging.Level;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import it.whoteach.scraper.connector.GoogleCloudConnector;
@@ -27,24 +29,48 @@ public class CsvService {
 	@Autowired
 	GoogleCloudConnector googleCloudConnector;
 
-	public List<Long> saveCsv(String fileName) {
+	public ResponseEntity<List<Long>> postFromBucket(String fileName) {
+		if(fileName == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		
+		int invalidArticles = 0;
 		List<Long> ids = new ArrayList<>();
+		
 		for(ArticleDto a : googleCloudConnector.retrieveCsv(fileName)) {
 			if(articleRepository.existsByUrl(a.getUrl()))
 				log.log(Level.INFO, String.format("Exist an Article with this url yet: ", a.getUrl()));
 			else {
-				ids.add(articleRepository.save(this.modelMapper.map(a, Article.class)).getId());				
+				var art = this.modelMapper.map(a, Article.class); 
+				if(art != null)
+					ids.add(art.getId());		
+				else {
+					invalidArticles++;
+				}
 			}
 		}
-		return ids;
+		log.log(Level.INFO, "Total invalid articles: " + invalidArticles);
+		
+		return new ResponseEntity<>(ids, HttpStatus.OK);
 	}
 
-	public List<Long> updateCsv(String fileName) {
+	public ResponseEntity<List<Long>> putFromBucket(String fileName) {
+		if(fileName == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		
+		int invalidArticles = 0;
 		List<Long> ids = new ArrayList<>();
+		
 		for(ArticleDto a : googleCloudConnector.retrieveCsv(fileName)) {
-			ids.add(articleRepository.save(this.modelMapper.map(a, Article.class)).getId());
+			var art = this.modelMapper.map(a, Article.class);
+			if(art != null)
+				ids.add(art.getId());		
+			else {
+				invalidArticles++;
+			}
 		}
-		return ids;
+		log.log(Level.INFO, "Total invalid articles: " + invalidArticles);
+		
+		return new ResponseEntity<>(ids, HttpStatus.OK);
 	}
 
 }

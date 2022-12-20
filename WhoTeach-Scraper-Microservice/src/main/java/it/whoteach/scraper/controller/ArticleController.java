@@ -3,7 +3,6 @@ package it.whoteach.scraper.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,15 +20,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import it.whoteach.scraper.dto.ArticleDto;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.service.ArticleService;
-import lombok.extern.java.Log;
 
-@Log
 @RestController
 @RequestMapping("/api")
 public class ArticleController {
-
-	@Autowired
-	private ModelMapper modelMapper;
 
 	@Autowired
 	private ArticleService articleService;
@@ -87,15 +81,7 @@ public class ArticleController {
 	public ResponseEntity<Long> newArticle(@Parameter(description = "ArticleDto to post", 
 	required = true) 
 	@RequestBody ArticleDto article) {
-		if(articleService.existsByUrl(article.getUrl())) {
-			log.info(String.format("Exist an Article with this url yet: ", article.getUrl()));
-			//return new ResponseEntity<Long>(HttpStatus.BAD_REQUEST);
-			return null;
-		}
-		else {
-			return new ResponseEntity<Long>(articleService.save(this.modelMapper.map(article, Article.class)).getId(),
-					HttpStatus.OK);
-		}
+		return articleService.newArticle(article);
 	}
 
 	/**
@@ -111,12 +97,8 @@ public class ArticleController {
 	public ResponseEntity<List<Long>> newArticles(@Parameter(description = "List of ArticleDto to post", 
 	required = true) 
 	@RequestBody List<ArticleDto> articles) {
-		List<Long> ids = new ArrayList<>();
-		for(ArticleDto a : articles) {
-			ids.add(newArticle(a).getBody());
-		}
-		//ids.removeAll(Collections.singleton(null));
-		return new ResponseEntity<List<Long>>(ids, HttpStatus.OK);
+		return articleService.newArticles(articles);
+		
 	}
 
 	/**
@@ -132,8 +114,7 @@ public class ArticleController {
 	public ResponseEntity<Long> update(@Parameter(description = "ArticleDto to put", 
 	required = true) 
 	@RequestBody ArticleDto article) {
-		return new ResponseEntity<Long>(articleService.update(this.modelMapper.map(article, Article.class)).getId(),
-				HttpStatus.OK);
+		return articleService.update(article);
 	}
 
 	/**
@@ -149,12 +130,7 @@ public class ArticleController {
 	public ResponseEntity<List<Long>> updateAll(@Parameter(description = "List of ArticleDto to post", 
 			required = true) 
 	@RequestBody List<ArticleDto> articles) {
-		List<Long> ids = new ArrayList<>();
-		for(ArticleDto a : articles) {
-			Article art = articleService.update(this.modelMapper.map(a, Article.class));
-			ids.add(art.getId());
-		}	
-		return new ResponseEntity<List<Long>>(ids, HttpStatus.OK);
+		return articleService.updateAll(articles);
 	}
 
 	/**

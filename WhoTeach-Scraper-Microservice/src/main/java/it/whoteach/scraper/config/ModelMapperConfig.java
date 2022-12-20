@@ -29,7 +29,6 @@ import it.whoteach.scraper.dto.SubsubdomainDto;
 import it.whoteach.scraper.dto.TitleDto;
 import it.whoteach.scraper.dto.TypeDto;
 import it.whoteach.scraper.dto.UploadDateDto;
-import it.whoteach.scraper.exception.RequiredFieldNullException;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.pojo.Author;
 import it.whoteach.scraper.pojo.Description;
@@ -82,8 +81,10 @@ public class ModelMapperConfig {
 		return modelMapper;
 	}
 
-	// se si vuole continuare l'esecuzione, si loggano le exception e si ritorna null, cambiando opportunamente i metodi che usano i suoi return
 	private Converter<ArticleDto, Article> articleConverterDto = context -> {
+		if(context.getSource() == null) {
+			return null;
+		}
 		Article article;
 		/*if(context.getSource().getId() != null) { 
 			article = articleService.getById(context.getSource().getId());
@@ -94,14 +95,17 @@ public class ModelMapperConfig {
 			article = new Article();
 		}*/
 		if(context.getSource().getUrl() == null) {
-			throw new RequiredFieldNullException("Url is mandatory");
+			log.log(Level.INFO, "Url cannot be null");
+			return null;
 		}
 		else {
 			if(articleService.existsByUrl(context.getSource().getUrl()))
 				article = articleService.getByUrl(context.getSource().getUrl());
 			else {
-				if(context.getSource().getSource() == null)
-					throw new RequiredFieldNullException("Source is mandatory");
+				if(context.getSource().getSource() == null) {
+					log.log(Level.INFO, "Source cannot be null");
+					return null;
+				}
 				article = new Article();
 			}
 		}
@@ -112,7 +116,8 @@ public class ModelMapperConfig {
 			if(m.matches())
 				article.setUrl(context.getSource().getUrl());
 			else {
-				throw new RequiredFieldNullException("Url is mandatory, this one has an invalid format");
+				log.log(Level.INFO, "Url is mandatory, this one is invalid: " + context.getSource().getUrl());
+				return null;
 			}
 		}
 		if(context.getSource().getSource() != null) { 
@@ -257,7 +262,7 @@ public class ModelMapperConfig {
 			article.setFormat(modelMapper.map(context.getSource().getFormat(), Format.class));
 		}
 		
-		return article;
+		return articleService.save(article);
 	};
 
 	private Converter<AuthorDto, Author> authorConverterDto = context -> {
