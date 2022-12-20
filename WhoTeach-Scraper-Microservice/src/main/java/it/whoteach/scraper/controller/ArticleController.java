@@ -179,7 +179,7 @@ public class ArticleController {
 	 */
 	@Operation(summary = "Delete the articles by their id", 
 			description = "Each id not found in the database it is silentily ignored")
-	@DeleteMapping("/delete/{ids}") 
+	@DeleteMapping("/deleteAll/{ids}") 
 	public ResponseEntity<List<Long>> deleteAllById(@Parameter(description = "IDs of the articles") 
 	@PathVariable List<Long> ids) {
 		List<Long> list = new ArrayList<>();

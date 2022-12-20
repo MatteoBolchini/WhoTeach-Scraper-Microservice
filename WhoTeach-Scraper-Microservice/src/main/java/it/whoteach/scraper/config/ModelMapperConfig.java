@@ -256,7 +256,7 @@ public class ModelMapperConfig {
 				&& !context.getSource().getFormat().getFormat().isEmpty()) { 
 			article.setFormat(modelMapper.map(context.getSource().getFormat(), Format.class));
 		}
-
+		
 		return article;
 	};
 
