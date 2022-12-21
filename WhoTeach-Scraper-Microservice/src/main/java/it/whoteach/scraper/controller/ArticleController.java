@@ -1,6 +1,5 @@
 package it.whoteach.scraper.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class ArticleController {
 	@Operation(summary = "Get the list of all articles in the database")	
 			@GetMapping("/articles")
 	public ResponseEntity<List<Article>> all() {
-		return articleService.findAll();
+		return new ResponseEntity<List<Article>>(articleService.findAll(), HttpStatus.OK);
 	}
 
 	/**
@@ -50,7 +49,7 @@ public class ArticleController {
 	public ResponseEntity<Article> getById(@Parameter(description = "ID of the article", 
 	required = true) 
 	@PathVariable Long id) {
-		return articleService.findById(id);
+		return new ResponseEntity<Article>(articleService.findById(id), HttpStatus.OK);
 	}
 	
 	/**
@@ -65,7 +64,7 @@ public class ArticleController {
 	public ResponseEntity<List<Article>> allById(@Parameter(description = "IDs of the articles", 
 	required = true)
 	@PathVariable List<Long> ids) {
-		return articleService.findAllById(ids);
+		return new ResponseEntity<List<Article>>(articleService.findAllById(ids), HttpStatus.OK);
 	}
 
 	/**
@@ -81,7 +80,7 @@ public class ArticleController {
 	public ResponseEntity<Long> newArticle(@Parameter(description = "ArticleDto to post", 
 	required = true) 
 	@RequestBody ArticleDto article) {
-		return articleService.newArticle(article);
+		return new ResponseEntity<Long>(articleService.newArticle(article), HttpStatus.OK);
 	}
 
 	/**
@@ -97,7 +96,7 @@ public class ArticleController {
 	public ResponseEntity<List<Long>> newArticles(@Parameter(description = "List of ArticleDto to post", 
 	required = true) 
 	@RequestBody List<ArticleDto> articles) {
-		return articleService.newArticles(articles);
+		return new ResponseEntity<List<Long>>(articleService.newArticles(articles), HttpStatus.OK);
 		
 	}
 
@@ -114,7 +113,7 @@ public class ArticleController {
 	public ResponseEntity<Long> update(@Parameter(description = "ArticleDto to put", 
 	required = true) 
 	@RequestBody ArticleDto article) {
-		return articleService.update(article);
+		return new ResponseEntity<Long>(articleService.update(article), HttpStatus.OK);
 	}
 
 	/**
@@ -130,7 +129,7 @@ public class ArticleController {
 	public ResponseEntity<List<Long>> updateAll(@Parameter(description = "List of ArticleDto to post", 
 			required = true) 
 	@RequestBody List<ArticleDto> articles) {
-		return articleService.updateAll(articles);
+		return new ResponseEntity<List<Long>>(articleService.updateAll(articles), HttpStatus.OK);
 	}
 
 	/**
@@ -144,7 +143,7 @@ public class ArticleController {
 	@DeleteMapping("/delete/{id}") 
 	public ResponseEntity<Long> deleteById(@Parameter(description = "ID of the article") 
 	@PathVariable Long id) {
-		return articleService.deleteById(id);
+		return new ResponseEntity<Long>(articleService.deleteById(id), HttpStatus.OK);
 	}
 	
 	/**
@@ -158,11 +157,7 @@ public class ArticleController {
 	@DeleteMapping("/deleteAll/{ids}") 
 	public ResponseEntity<List<Long>> deleteAllById(@Parameter(description = "IDs of the articles") 
 	@PathVariable List<Long> ids) {
-		List<Long> list = new ArrayList<>();
-		for(Long id : ids) {
-			deleteById(id);
-		}
-		return new ResponseEntity<List<Long>>(list, HttpStatus.OK);
+		return new ResponseEntity<List<Long>>(articleService.deleteAllBydId(ids), HttpStatus.OK);
 	}
 
 }

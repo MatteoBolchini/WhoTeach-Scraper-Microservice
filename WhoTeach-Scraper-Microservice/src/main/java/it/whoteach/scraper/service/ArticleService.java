@@ -7,8 +7,6 @@ import java.util.logging.Level;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import it.whoteach.scraper.dto.ArticleDto;
@@ -26,6 +24,19 @@ public class ArticleService {
 	@Lazy
 	private ModelMapper modelMapper;
 
+	public ArticleService(ArticleRepository articleRepository) {
+		this.articleRepository = articleRepository;
+	}
+	
+	public boolean existsByUrl(String url) {
+		return articleRepository.existsByUrl(url);
+	}
+	
+	public void deleteAlone() {
+		articleRepository.deleteAlone();
+	}
+	
+	// GET
 	public Article getById(Long id) {
 		return articleRepository.getById(id);
 	}
@@ -34,19 +45,17 @@ public class ArticleService {
 		return articleRepository.getByUrl(url);
 	}
 
-	public boolean existsByUrl(String url) {
-		return articleRepository.existsByUrl(url);
-	}
-
-	public ResponseEntity<Article> findById(Long id) {
+	public Article findById(Long id) {
 		if(articleRepository.existsById(id))
-			return new ResponseEntity<Article>(getById(id), HttpStatus.OK);
+			return getById(id);
 		else {
-			return new ResponseEntity<Article>(HttpStatus.BAD_REQUEST);
+			log.log(Level.INFO, String.format("Article with id [%s] not found", id));
+			return null;
 		}
 	}
 
-	public ResponseEntity<List<Article>> findAllById(List<Long> ids) {
+	// si può cambiare in maniera tale che richiami findById e nel ritorno ci siano segnati come null, gli articoli non trovati
+	public List<Article> findAllById(List<Long> ids) {
 		List<Article> list = new ArrayList<>();
 		for(Long id : ids) {
 			if(articleRepository.existsById(id))
@@ -55,13 +64,14 @@ public class ArticleService {
 				log.log(Level.INFO, String.format("Article with id [%s] not found", id));
 			}
 		}
-		return new ResponseEntity<List<Article>>(list, HttpStatus.OK);
+		return list;
 	}
 
-	public ResponseEntity<List<Article>> findAll() {
-		return new ResponseEntity<List<Article>>(articleRepository.findAll(), HttpStatus.OK);	
+	public List<Article> findAll() {
+		return articleRepository.findAll();	
 	}
 
+	// POST
 	public Article save(Article article) {
 		articleRepository.save(article);
 		deleteAlone();
@@ -72,34 +82,19 @@ public class ArticleService {
 		return articleRepository.saveAll(articles);
 	}
 
-	public ResponseEntity<Long> deleteById(Long id) {
-		articleRepository.deleteById(id);
-		deleteAlone();
-		return new ResponseEntity<Long>(id, HttpStatus.OK);
-	}
-
-	public ResponseEntity<Void> deleteAlone() {
-		articleRepository.deleteAlone();
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
-
-	public ResponseEntity<List<Long>> newArticles(List<ArticleDto> articles) {
-		int invalidArticles = 0;
+	// POST
+	public List<Long> newArticles(List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();
 		for(ArticleDto a : articles) {
-			var id = newArticle(a);
+			Long id = newArticle(a);
 			if(id != null)
-				ids.add(id.getBody());
-			else {
-				invalidArticles++;
-			}
+				ids.add(id);
 		}
-		log.log(Level.INFO, "Total invalid articles: " + invalidArticles);
 		
-		return new ResponseEntity<List<Long>>(ids, HttpStatus.OK);
+		return ids;
 	}
 
-	public ResponseEntity<Long> newArticle(ArticleDto article) {
+	public Long newArticle(ArticleDto article) {
 		if(existsByUrl(article.getUrl())) {
 			log.info(String.format("Exist an Article with this url yet: ", article.getUrl()));
 			return null;
@@ -109,34 +104,44 @@ public class ArticleService {
 			if(a == null) {
 				return null;
 			}
-			return new ResponseEntity<Long>(a.getId(),
-					HttpStatus.OK);
+			return a.getId();
 		}
 	}
-
-	public ResponseEntity<List<Long>> updateAll(List<ArticleDto> articles) {
-		int invalidArticles = 0;
-		List<Long> ids = new ArrayList<>();
-		for(ArticleDto a : articles) {
-			var id = update(a);
-			if(id != null)
-				ids.add(id.getBody());
-			else {
-				invalidArticles++;
-			}
-		}	
-		log.log(Level.INFO, "Total invalid articles: " + invalidArticles);
-
-		return new ResponseEntity<List<Long>>(ids, HttpStatus.OK);
-	}
-
-	public ResponseEntity<Long> update(ArticleDto article) {
-		var a = this.modelMapper.map(article, Article.class);
+	
+	// UPDATE
+	public Long update(ArticleDto article) {
+		Article a = this.modelMapper.map(article, Article.class);
 		if(a == null) {
 			return null;
 		}
 		
-		return new ResponseEntity<Long>(a.getId(), HttpStatus.OK);
+		return a.getId();
 	}
+	
+	public List<Long> updateAll(List<ArticleDto> articles) {
+		List<Long> ids = new ArrayList<>();
+		for(ArticleDto a : articles) {
+			Long id = update(a);
+			if(id != null)
+				ids.add(id);
+		}	
+
+		return ids;
+	}
+	
+	// DELETE
+	public Long deleteById(Long id) {
+		articleRepository.deleteById(id);
+		deleteAlone();
+		return id;
+	}
+	
+	public List<Long> deleteAllBydId(List<Long> ids) {
+		List<Long> list = new ArrayList<>();
+		for(Long id : ids) {
+			deleteById(id);
+		}
+		return list;
+	}		
 
 }
