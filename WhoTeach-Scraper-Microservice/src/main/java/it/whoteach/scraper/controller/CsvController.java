@@ -3,6 +3,7 @@ package it.whoteach.scraper.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +34,9 @@ public class CsvController {
 	@PostMapping("/post-bucket/{fileName}")
 	public ResponseEntity<List<Long>> postFromBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
 	@PathVariable String fileName) {
-		return csvService.postFromBucket(fileName);
+		if(fileName == null)
+			return new ResponseEntity<List<Long>>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<List<Long>>(csvService.postFromBucket(fileName), HttpStatus.OK);
 	}
 	
 	/**
@@ -49,7 +52,9 @@ public class CsvController {
 	@PutMapping("/put-bucket/{fileName}")
 	public ResponseEntity<List<Long>> putFromBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
 	@PathVariable String fileName) {
-		return csvService.putFromBucket(fileName);
+		if(fileName == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<List<Long>>(csvService.putFromBucket(fileName), HttpStatus.OK);
 	}
 	
 }
