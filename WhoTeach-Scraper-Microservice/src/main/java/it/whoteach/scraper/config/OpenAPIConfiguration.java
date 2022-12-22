@@ -23,10 +23,7 @@ public class OpenAPIConfiguration {
                 .info(new Info()
                         .title("WhoTeach Scraper Microservice")
                         .description("Those are REST API to interrogate a Neo4j Aura DB")
-                        .version("0.0.1"))
-                .components(new Components()
-                       .addSecuritySchemes("basicScheme",
-                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")));
+                        .version("0.0.1"));
     }
     
 }

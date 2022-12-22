@@ -83,17 +83,6 @@ public class ArticleService {
 	}
 
 	// POST
-	public List<Long> newArticles(List<ArticleDto> articles) {
-		List<Long> ids = new ArrayList<>();
-		for(ArticleDto a : articles) {
-			Long id = newArticle(a);
-			if(id != null)
-				ids.add(id);
-		}
-		
-		return ids;
-	}
-
 	public Long newArticle(ArticleDto article) {
 		if(existsByUrl(article.getUrl())) {
 			log.info(String.format("Exist an Article with this url yet: ", article.getUrl()));
@@ -108,6 +97,17 @@ public class ArticleService {
 		}
 	}
 	
+	public List<Long> newArticles(List<ArticleDto> articles) {
+		List<Long> ids = new ArrayList<>();
+		for(ArticleDto a : articles) {
+			Long id = newArticle(a);
+			if(id != null)
+				ids.add(id);
+		}
+		
+		return ids;
+	}
+
 	// UPDATE
 	public Long update(ArticleDto article) {
 		Article a = this.modelMapper.map(article, Article.class);

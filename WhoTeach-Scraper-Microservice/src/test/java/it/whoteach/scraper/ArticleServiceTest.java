@@ -40,18 +40,16 @@ public class ArticleServiceTest {
 		Article article = new Article();
 		article.setUrl("https://www.javaguides.net/2022/03/spring-boot-unit-testing-crud-rest-api-with-junit-and-mockito.html");
 		article.setSource("Indian Java");
+		article.setId(id);
 		
 		articleService.save(article);
 		verify(articleRepository).save(article);
 	}
 	
-	/*@Test
-	public void updateArticle() {
-		Article article = new Article();
-		article.setUrl("https://www.javaguides.net/2022/03/spring-boot-unit-testing-crud-rest-api-with-junit-and-mockito.html");
-		article.setSource("Indian Java");
-		
-		articleService.update(article);
-		verify(articleRepository).update(article);
-	}*/
+	@Test
+	public void deleteArticleById() {
+		articleService.deleteById(id);
+		verify(articleRepository).deleteById(id);
+	}
+	
 }
