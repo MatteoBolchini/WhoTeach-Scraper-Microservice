@@ -101,12 +101,12 @@ public class ModelMapperConfig {
 			if(articleService.existsByUrl(context.getSource().getUrl()))
 				article = articleService.getByUrl(context.getSource().getUrl());
 			else {
-				if(context.getSource().getSource() == null) {
+				/*if(context.getSource().getSource() == null) {
 					log.log(Level.INFO, "Source cannot be null");
 					return null;
-				}
+				}*/
 				article = new Article();
-				article.setSource(context.getSource().getSource());
+				//article.setSource(context.getSource().getSource());
 			}
 		}
 
