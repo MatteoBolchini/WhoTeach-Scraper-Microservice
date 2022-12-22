@@ -82,18 +82,17 @@ public class ModelMapperConfig {
 	}
 
 	private Converter<ArticleDto, Article> articleConverterDto = context -> {
-		if(context.getSource() == null) {
-			return null;
-		}
 		Article article;
+
 		/*if(context.getSource().getId() != null) { 
-			article = articleService.getById(context.getSource().getId());
+		article = articleService.getById(context.getSource().getId());
 		}
 		else {
 			if(context.getSource().getUrl() == null || context.getSource().getSource() == null)
 				throw new RequiredFieldNullException("Url and Source are mandatory");
 			article = new Article();
 		}*/
+
 		if(context.getSource().getUrl() == null) {
 			log.log(Level.INFO, "Url cannot be null");
 			return null;
@@ -107,21 +106,17 @@ public class ModelMapperConfig {
 					return null;
 				}
 				article = new Article();
+				article.setSource(context.getSource().getSource());
 			}
 		}
-		
-		if(context.getSource().getUrl() != null) {
-			Pattern p = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
-			Matcher m = p.matcher(context.getSource().getUrl());
-			if(m.matches())
-				article.setUrl(context.getSource().getUrl());
-			else {
-				log.log(Level.INFO, "Url is mandatory, this one is invalid: " + context.getSource().getUrl());
-				return null;
-			}
-		}
-		if(context.getSource().getSource() != null) { 
-			article.setSource(context.getSource().getSource());
+
+		Pattern p0 = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+		Matcher m0 = p0.matcher(context.getSource().getUrl());
+		if(m0.matches())
+			article.setUrl(context.getSource().getUrl());
+		else {
+			log.log(Level.INFO, "Url is mandatory, this one is invalid: " + context.getSource().getUrl());
+			return null;
 		}
 
 		// Dto to pojo
@@ -151,6 +146,7 @@ public class ModelMapperConfig {
 			}
 			article.setSubdomain(list3);
 		}
+		
 		if(context.getSource().getKeywords() != null) { 
 			List<Keyword> list4 = new ArrayList<>();
 			for(KeywordDto k : context.getSource().getKeywords()) {
@@ -261,7 +257,7 @@ public class ModelMapperConfig {
 				&& !context.getSource().getFormat().getFormat().isEmpty()) { 
 			article.setFormat(modelMapper.map(context.getSource().getFormat(), Format.class));
 		}
-		
+
 		return articleService.save(article);
 	};
 
