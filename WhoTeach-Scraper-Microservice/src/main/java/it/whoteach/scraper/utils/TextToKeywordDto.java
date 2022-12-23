@@ -10,7 +10,7 @@ public class TextToKeywordDto extends AbstractCsvConverter {
 
 	@Override
 	public Object convertToRead(String value) throws CsvDataTypeMismatchException, CsvConstraintViolationException {
-		KeywordDto k = new KeywordDto(value);
+		KeywordDto k = new KeywordDto(value.trim());
 		return k;
 	}
 

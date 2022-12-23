@@ -83,7 +83,7 @@ public class ModelMapperConfig {
 
 	private Converter<ArticleDto, Article> articleConverterDto = context -> {
 		Article article;
-
+		// da usare in caso servano gli id per la ricerca
 		/*if(context.getSource().getId() != null) { 
 		article = articleService.getById(context.getSource().getId());
 		}
@@ -101,6 +101,7 @@ public class ModelMapperConfig {
 			if(articleService.existsByUrl(context.getSource().getUrl()))
 				article = articleService.getByUrl(context.getSource().getUrl());
 			else {
+				// da usare nel caso serva distinguere le source
 				/*if(context.getSource().getSource() == null) {
 					log.log(Level.INFO, "Source cannot be null");
 					return null;
@@ -218,7 +219,7 @@ public class ModelMapperConfig {
 		if(context.getSource().getUploadDate() != null 
 				&& context.getSource().getUploadDate().getUploadDate() != null
 				&& !context.getSource().getUploadDate().getUploadDate().isEmpty()) { 
-			Pattern p = Pattern.compile("[0-9]{2}/[0-9]{2}/[0-9]{4}");
+			Pattern p = Pattern.compile("[0-9]{4}/[0-9]{2}/[0-9]{2}");
 			Matcher m = p.matcher(context.getSource().getUploadDate().getUploadDate());
 			if(m.matches()) 
 				article.setUploadDate(modelMapper.map(context.getSource().getUploadDate(), UploadDate.class));

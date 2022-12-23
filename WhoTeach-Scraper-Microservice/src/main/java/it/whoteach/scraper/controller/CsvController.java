@@ -1,5 +1,6 @@
 package it.whoteach.scraper.controller;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,16 @@ public class CsvController {
 		if(fileName == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		return new ResponseEntity<List<Long>>(csvService.putFromBucket(fileName), HttpStatus.OK);
+	}
+	
+	// per test in locale
+	@PostMapping("/post-bucket-local/{fileName}")
+	public ResponseEntity<Void> postFromLocalBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
+	@PathVariable String fileName) throws IllegalStateException, FileNotFoundException {
+		if(fileName == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		csvService.postFromBucketLocal(fileName);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 }

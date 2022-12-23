@@ -10,7 +10,7 @@ public class TextToDestinationPublicDto extends AbstractCsvConverter {
 
 	@Override
 	public Object convertToRead(String value) throws CsvDataTypeMismatchException, CsvConstraintViolationException {
-		DestinationPublicDto d = new DestinationPublicDto(value);
+		DestinationPublicDto d = new DestinationPublicDto(value.trim());
 		return d;
 	}
 

@@ -10,7 +10,7 @@ public class TextToSubdomainDto extends AbstractCsvConverter {
 
 	@Override
 	public Object convertToRead(String value) throws CsvDataTypeMismatchException, CsvConstraintViolationException {
-		SubdomainDto s = new SubdomainDto(value);
+		SubdomainDto s = new SubdomainDto(value.trim());
 		return s;
 	}
 
