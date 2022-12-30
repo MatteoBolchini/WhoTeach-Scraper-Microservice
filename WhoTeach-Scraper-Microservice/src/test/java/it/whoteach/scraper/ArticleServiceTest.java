@@ -31,8 +31,8 @@ public class ArticleServiceTest {
 	
 	@Test
 	public void getArticleById() {
-		articleService.getById(id);
-		verify(articleRepository).getById(id);
+		articleService.findById(id);
+		verify(articleRepository).findById(id);
 	}
 	
 	@Test

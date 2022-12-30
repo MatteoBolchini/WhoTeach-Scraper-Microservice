@@ -37,31 +37,22 @@ public class ArticleService {
 	}
 	
 	// GET
-	public Article getById(Long id) {
-		return articleRepository.getById(id);
+	public Article findById(Long id) {
+		return articleRepository.findById(id).get();
 	}
 
 	public Article getByUrl(String url) {
 		return articleRepository.getByUrl(url);
 	}
 
-	public Article findById(Long id) {
-		if(articleRepository.existsById(id))
-			return getById(id);
-		else {
-			log.log(Level.INFO, String.format("Article with id [%s] not found", id));
-			return null;
-		}
-	}
-
 	// si può cambiare in maniera tale che richiami findById e nel ritorno ci siano segnati come null, gli articoli non trovati
 	public List<Article> findAllById(List<Long> ids) {
 		List<Article> list = new ArrayList<>();
 		for(Long id : ids) {
-			if(articleRepository.existsById(id))
-				list.add(getById(id));		
-			else {
-				log.log(Level.INFO, String.format("Article with id [%s] not found", id));
+			try {
+				list.add(findById(id));
+			} catch (Exception e) {
+				log.log(Level.WARNING, String.format("Article with id [%s] not found", id));
 			}
 		}
 		return list;

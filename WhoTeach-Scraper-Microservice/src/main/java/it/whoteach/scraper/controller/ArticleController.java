@@ -1,6 +1,7 @@
 package it.whoteach.scraper.controller;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import it.whoteach.scraper.dto.ArticleDto;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.service.ArticleService;
+import lombok.extern.java.Log;
 
+@Log
 @RestController
 @RequestMapping("/api")
 public class ArticleController {
@@ -49,7 +52,12 @@ public class ArticleController {
 	public ResponseEntity<Article> getById(@Parameter(description = "ID of the article", 
 	required = true) 
 	@PathVariable Long id) {
-		return new ResponseEntity<Article>(articleService.findById(id), HttpStatus.OK);
+		try {
+			return new ResponseEntity<Article>(articleService.findById(id), HttpStatus.OK);
+		} catch (Exception e) {
+			log.log(Level.WARNING, String.format("Article with id [%s] not found", id));
+			return new ResponseEntity<Article>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	/**

@@ -29,6 +29,7 @@ import it.whoteach.scraper.dto.SubsubdomainDto;
 import it.whoteach.scraper.dto.TitleDto;
 import it.whoteach.scraper.dto.TypeDto;
 import it.whoteach.scraper.dto.UploadDateDto;
+import it.whoteach.scraper.exception.InvalidFieldException;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.pojo.Author;
 import it.whoteach.scraper.pojo.Description;
@@ -94,8 +95,9 @@ public class ModelMapperConfig {
 		}*/
 
 		if(context.getSource().getUrl() == null) {
-			log.log(Level.INFO, "Url cannot be null");
-			return null;
+			throw new InvalidFieldException("Url cannot be null");
+			//log.log(Level.INFO, "Url cannot be null");
+			//return null;
 		}
 		else {
 			if(articleService.existsByUrl(context.getSource().getUrl()))
@@ -116,8 +118,9 @@ public class ModelMapperConfig {
 		if(m0.matches())
 			article.setUrl(context.getSource().getUrl());
 		else {
-			log.log(Level.INFO, "Url is mandatory, this one is invalid: " + context.getSource().getUrl());
-			return null;
+			throw new InvalidFieldException("Url is mandatory, this one is invalid: " + context.getSource().getUrl());
+			//log.log(Level.INFO, "Url is mandatory, this one is invalid: " + context.getSource().getUrl());
+			//return null;
 		}
 
 		// Dto to pojo

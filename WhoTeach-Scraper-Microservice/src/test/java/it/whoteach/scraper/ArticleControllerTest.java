@@ -66,7 +66,7 @@ public class ArticleControllerTest {
 		article.setSource("Indian Java");
 		article.setId(123456789L);
 
-		when(articleService.getById(any(Long.class))).thenReturn(article);
+		when(articleService.findById(any(Long.class))).thenReturn(article);
 		ResultActions response = mockMvc.perform(get("/api/getAll/{ids}", article.getId())
 				.with(csrf()));
 		response.andDo(print()).andExpect(status().isOk());
@@ -168,9 +168,9 @@ public class ArticleControllerTest {
 		articleDto.setSource("Indian Java");
 		articleDto.setId(123456789L);
 		ArticleDto articleDto2 = new ArticleDto();
-		articleDto2.setUrl("https://www.facebook.net/2022/03/mockito.html");
+		articleDto2.setUrl("https://www.javaguides.net/2022/03/spring-boot-unit-testing-crud-rest-api-with-junit-and-mockito.html");
 		articleDto2.setSource("Facebook Java");
-		articleDto2.setId(12324245L);
+		articleDto2.setId(123456789L);
 		
 		when(articleService.update(any(ArticleDto.class))).thenReturn(articleDto.getId());
 		ResultActions response = mockMvc.perform(put("/api/update")
