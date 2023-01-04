@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import it.whoteach.scraper.dto.ArticleDto;
 import it.whoteach.scraper.exception.BadRequestException;
 import it.whoteach.scraper.pojo.Article;
+import it.whoteach.scraper.pojo.ResponseDelete;
+import it.whoteach.scraper.pojo.ResponseGet;
+import it.whoteach.scraper.pojo.ResponsePost;
+import it.whoteach.scraper.pojo.ResponsePut;
 import it.whoteach.scraper.repository.ArticleRepository;
 import lombok.extern.java.Log;
 
@@ -57,6 +61,21 @@ public class ArticleService {
 		}
 		
 		return list;
+	}
+	
+	public ResponseGet findAllById2(List<Long> ids) {
+		List<Article> list = new ArrayList<>();
+		int c = 0;
+		for(Long id : ids) {
+			try {
+				list.add(findById(id));
+			} catch (Exception e) {
+				c++;
+				log.log(Level.WARNING, String.format("Article with id [%s] not found", id));
+			}
+		}
+		
+		return new ResponseGet(list, ids.size(), c);
 	}
 
 	public List<Article> findAll() {
@@ -111,6 +130,30 @@ public class ArticleService {
 		
 		return ids;
 	}
+	
+	public ResponsePost newArticles2(List<ArticleDto> articles) {
+		List<Long> ids = new ArrayList<>();
+		int c = 0;
+		for(ArticleDto a : articles) {
+			if(existsByUrl(a.getUrl())) {
+				c++;
+				log.log(Level.SEVERE, String.format("Cannot POST the Article, his url exists yet [%s]", 
+						a.getUrl()));
+			}
+			
+			else {
+				try {
+					ids.add(this.modelMapper.map(a, Article.class).getId());
+				} catch (Exception e) {
+					c++;
+					log.log(Level.WARNING, String.format("Cannot POST the Article, his url is invalid or null [%s]", 
+							a.getUrl()));
+				}
+			}	
+		}
+		
+		return new ResponsePost(ids, articles.size(), c);
+	}
 
 	// UPDATE
 	public Long update(ArticleDto article) {
@@ -136,6 +179,22 @@ public class ArticleService {
 		return ids;
 	}
 	
+	public ResponsePut updateAll2(List<ArticleDto> articles) {
+		List<Long> ids = new ArrayList<>();
+		int c = 0;
+		for(ArticleDto a : articles) {
+			try {
+				ids.add(this.modelMapper.map(a, Article.class).getId());
+			} catch (Exception e) {
+				c++;
+				log.log(Level.WARNING, String.format("Cannot PUT the Article, his url is invalid or null [%s]", 
+						a.getUrl()));
+			}
+		}	
+
+		return new ResponsePut(ids, articles.size(), c);
+	}
+	
 	// DELETE
 	public Long deleteById(Long id) {
 		Article a = findById(id);
@@ -152,13 +211,33 @@ public class ArticleService {
 		List<Long> list = new ArrayList<>();
 		for(Long id : ids) {
 			try {
-				deleteById(id);
+				Article a = findById(id);
+				list.add(id);
+				articleRepository.delete(a);
+				deleteAlone();
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.log(Level.WARNING, String.format("Article with id [%s] not found", id));
 			}
 		}
 		
 		return list;
 	}		
-
+	
+	public ResponseDelete deleteAllBydId2(List<Long> ids) {
+		List<Long> list = new ArrayList<>();
+		int c = 0;
+		for(Long id : ids) {
+			try {
+				Article a = findById(id);
+				list.add(id);
+				articleRepository.delete(a);
+				deleteAlone();
+			} catch (Exception e) {
+				c++;
+				log.log(Level.WARNING, String.format("Article with id [%s] not found", id));
+			}
+		}
+		
+		return new ResponseDelete(list, ids.size(), c);
+	}
 }

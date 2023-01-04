@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import it.whoteach.scraper.pojo.ResponsePost;
+import it.whoteach.scraper.pojo.ResponsePut;
 import it.whoteach.scraper.service.CsvService;
 import lombok.NonNull;
 
@@ -41,6 +43,22 @@ public class CsvController {
 	}
 	
 	/**
+	 * insert the articles from the csv file to the database
+	 * 
+	 * @param fileName The bucket's name
+	 * @return the Http status
+	 * @throws NullPointerException in case fileName is null
+	 */
+	@Operation(summary = "Creates new articles in the database",
+			description = "If one article is invalid (wrong arguments or inserted yet) "
+					+ "it is logged and the operation continues")
+	@PostMapping("/post-bucket2/{fileName}")
+	public ResponseEntity<ResponsePost> postFromBucket2(@Parameter(description = "Name of the csv file in the bucket", required = true) 
+	@PathVariable @NonNull String fileName) {
+		return new ResponseEntity<ResponsePost>(csvService.postFromBucket2(fileName), HttpStatus.OK);
+	}
+	
+	/**
 	 * update the articles from the csv file to the database
 	 * 
 	 * @param fileName The bucket's name
@@ -55,6 +73,23 @@ public class CsvController {
 	public ResponseEntity<List<Long>> putFromBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
 	@PathVariable @NonNull String fileName) {
 		return new ResponseEntity<List<Long>>(csvService.putFromBucket(fileName), HttpStatus.OK);
+	}
+	
+	/**
+	 * update the articles from the csv file to the database
+	 * 
+	 * @param fileName The bucket's name
+	 * @return the Http status
+	 * @throws NullPointerException in case fileName is null
+	 */
+	@Operation(summary = "Creates new articles if their Url is not present in the database yet, "
+			+ "otherwise it updates them.",
+			description = "If one article is invalid (wrong arguments), "
+					+ "it is logged and the operation continues")
+	@PutMapping("/put-bucket2/{fileName}")
+	public ResponseEntity<ResponsePut> putFromBucket2(@Parameter(description = "Name of the csv file in the bucket", required = true) 
+	@PathVariable @NonNull String fileName) {
+		return new ResponseEntity<ResponsePut>(csvService.putFromBucket2(fileName), HttpStatus.OK);
 	}
 	
 	// per test in locale

@@ -19,7 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import it.whoteach.scraper.dto.ArticleDto;
+import it.whoteach.scraper.exception.BadRequestException;
 import it.whoteach.scraper.pojo.Article;
+import it.whoteach.scraper.pojo.ResponseDelete;
+import it.whoteach.scraper.pojo.ResponseGet;
+import it.whoteach.scraper.pojo.ResponsePost;
+import it.whoteach.scraper.pojo.ResponsePut;
 import it.whoteach.scraper.service.ArticleService;
 import lombok.NonNull;
 import lombok.extern.java.Log;
@@ -80,6 +85,22 @@ public class ArticleController {
 	@PathVariable @NonNull List<Long> ids) {
 			return new ResponseEntity<List<Article>>(articleService.findAllById(ids), HttpStatus.OK);	
 	}
+	
+	/**
+	 * Gets all articles by their id
+	 * 
+	 * @param ids the list of the articles's id
+	 * @return the list of articles specified by their id
+	 * @throws NullPointerException in case the given list is null
+	 */
+	@Operation(summary = "Gets the list of articles specified by their id",
+			description = "If the id is not found in the database it is logged")
+	@GetMapping("/getAll2/{ids}") 
+	public ResponseEntity<ResponseGet> allById2(@Parameter(description = "IDs of the articles", 
+	required = true)
+	@PathVariable @NonNull List<Long> ids) {
+			return new ResponseEntity<ResponseGet>(articleService.findAllById2(ids), HttpStatus.OK);	
+	}
 
 	/**
 	 * Creates the article in the database
@@ -121,6 +142,23 @@ public class ArticleController {
 	@RequestBody @NonNull List<ArticleDto> articles) {
 			return new ResponseEntity<List<Long>>(articleService.newArticles(articles), HttpStatus.OK);
 	}
+	
+	/**
+	 * Creates all articles in the database
+	 * 
+	 * @param articles the list of articles to be added to the database
+	 * @return the list of added article's id
+	 * @throws NullPointerException in case the given list is null
+	 */
+	@Operation(summary = "Creates the articles in the database", 
+			description = "Receives a list of ArticleDto, checks them and creates an Article "
+					+ "from each valid ArticleDto")
+	@PostMapping("/articles2")
+	public ResponseEntity<ResponsePost> newArticles2(@Parameter(description = "List of ArticleDto to create", 
+	required = true) 
+	@RequestBody @NonNull List<ArticleDto> articles) {
+			return new ResponseEntity<ResponsePost>(articleService.newArticles2(articles), HttpStatus.OK);
+	}
 
 	/**
 	 * Updates the article in the database
@@ -161,6 +199,23 @@ public class ArticleController {
 	@RequestBody @NonNull List<ArticleDto> articles) {
 		return new ResponseEntity<List<Long>>(articleService.updateAll(articles), HttpStatus.OK);
 	}
+	
+	/**
+	 * Updates all articles in the database
+	 * 
+	 * @param articles the list of article (same)
+	 * @return the list of upgraded articles's id
+	 * @throws NullPointerException in case the given list is null
+	 */
+	@Operation(summary = "Updates the articles in the database", 
+			description = "Receives a list of ArticleDto, checks them and updates or creates an Article "
+					+ "from each valid ArticleDto")
+	@PutMapping("/updateAll2")
+	public ResponseEntity<ResponsePut> updateAll2(@Parameter(description = "List of ArticleDto to update", 
+			required = true) 
+	@RequestBody @NonNull List<ArticleDto> articles) {
+		return new ResponseEntity<ResponsePut>(articleService.updateAll2(articles), HttpStatus.OK);
+	}
 
 	/**
 	 * Deletes the article by the given id
@@ -196,6 +251,21 @@ public class ArticleController {
 	public ResponseEntity<List<Long>> deleteAllById(@Parameter(description = "IDs of the articles") 
 	@PathVariable @NonNull List<Long> ids) {
 		return new ResponseEntity<List<Long>>(articleService.deleteAllBydId(ids), HttpStatus.OK);
+	}
+	
+	/**
+	 * Deletes the articles by their id
+	 * 
+	 * @param ids the list of the articles's id
+	 * @return the deleted articles's id
+	 * @throws NullPointerException in case the given list is null
+	 */
+	@Operation(summary = "Deletes the articles by their id", 
+			description = "Each id not found in the database throws and exception")
+	@DeleteMapping("/deleteAll2/{ids}") 
+	public ResponseEntity<ResponseDelete> deleteAllById2(@Parameter(description = "IDs of the articles") 
+	@PathVariable @NonNull List<Long> ids) {
+		return new ResponseEntity<ResponseDelete>(articleService.deleteAllBydId2(ids), HttpStatus.OK);
 	}
 
 }
