@@ -24,22 +24,22 @@ public class ArticleServiceTest {
 	private Long id = 123456789L;
 	
 	@Test
-	public void findAllArticles() {
-		articleService.findAll();
-		verify(articleRepository).findAll();
-	}
-	
-	@Test
 	public void getArticleById() {
 		articleService.findById(id);
 		verify(articleRepository).findById(id);
 	}
 	
 	@Test
+	public void findAllArticles() {
+		articleService.findAll();
+		verify(articleRepository).findAll();
+	}
+	
+	@Test
 	public void saveArticle() {
 		Article article = new Article();
 		article.setUrl("https://www.javaguides.net/2022/03/spring-boot-unit-testing-crud-rest-api-with-junit-and-mockito.html");
-		article.setSource("Indian Java");
+		article.setSource("Test Java");
 		article.setId(id);
 		
 		articleService.save(article);

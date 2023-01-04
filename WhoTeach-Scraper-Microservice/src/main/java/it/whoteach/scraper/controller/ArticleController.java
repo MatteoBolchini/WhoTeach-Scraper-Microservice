@@ -1,6 +1,7 @@
 package it.whoteach.scraper.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +47,10 @@ public class ArticleController {
 	 * 
 	 * @param id the article's id
 	 * @return the article specified by the id
+	 * @throws NoSuchElementException if no value is present
 	 */
-	@Operation(summary = "Get the article specified by the id given")
+	@Operation(summary = "Gets the article specified by the id given",
+			description = "If the id is not found in the database it is logged")
 	@GetMapping("/get/{id}")
 	public ResponseEntity<Article> getById(@Parameter(description = "ID of the article", 
 	required = true) 
@@ -66,8 +69,8 @@ public class ArticleController {
 	 * @param ids the list of the articles's id
 	 * @return the list of articles specified by their id
 	 */
-	@Operation(summary = "Get the list of articles specified by their id",
-			description = "If the id is not found in the database it is silentily ignored")
+	@Operation(summary = "Gets the list of articles specified by their id",
+			description = "If the id is not found in the database it is logged")
 	@GetMapping("/getAll/{ids}") 
 	public ResponseEntity<List<Article>> allById(@Parameter(description = "IDs of the articles", 
 	required = true)
@@ -80,15 +83,22 @@ public class ArticleController {
 	 * 
 	 * @param article the article to be added to the database
 	 * @return the added article's id
+	 * @throws BadRequestException in case the article is presented yet in the database or it has an invalid url
 	 */
-	@Operation(summary = "Post the article in the database", 
+	@Operation(summary = "Creates the article in the database", 
 			description = "If the article is invalid (wrong arguments or inserted yet) "
-					+ "it is logged and operation returns null")
+					+ "it throws and exception")
 	@PostMapping("/article")
-	public ResponseEntity<Long> newArticle(@Parameter(description = "ArticleDto to post", 
+	public ResponseEntity<Long> newArticle(@Parameter(description = "ArticleDto to create", 
 	required = true) 
 	@RequestBody ArticleDto article) {
-		return new ResponseEntity<Long>(articleService.newArticle(article), HttpStatus.OK);
+		try {
+			return new ResponseEntity<Long>(articleService.newArticle(article), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Long>(HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 
 	/**
@@ -97,15 +107,14 @@ public class ArticleController {
 	 * @param articles the list of articles to be added to the database
 	 * @return the list of added article's id
 	 */
-	@Operation(summary = "Post the articles in the database", 
+	@Operation(summary = "Creates the articles in the database", 
 			description = "Receives a list of ArticleDto, checks them and creates an Article "
-					+ "from each valid ArticleDto without a Url yet present in the database")
+					+ "from each valid ArticleDto")
 	@PostMapping("/articles")
-	public ResponseEntity<List<Long>> newArticles(@Parameter(description = "List of ArticleDto to post", 
+	public ResponseEntity<List<Long>> newArticles(@Parameter(description = "List of ArticleDto to create", 
 	required = true) 
 	@RequestBody List<ArticleDto> articles) {
-		return new ResponseEntity<List<Long>>(articleService.newArticles(articles), HttpStatus.OK);
-		
+			return new ResponseEntity<List<Long>>(articleService.newArticles(articles), HttpStatus.OK);
 	}
 
 	/**
@@ -113,15 +122,21 @@ public class ArticleController {
 	 * 
 	 * @param article the ArticleDto (da convertire per aggiornare)
 	 * @return the upgraded article's id
+	 * @throws BadRequestException in case the article has an invalid url
 	 */
 	
-	@Operation(summary = "Put the article in the database", 
-			description = "Receives an ArticleDto, checks it and updates or creates an Article if it is a valid ArticleDto")
+	@Operation(summary = "Updates the article in the database", 
+			description = "Receives an ArticleDto, checks it and updates or creates an Article")
 	@PutMapping("/update")
-	public ResponseEntity<Long> update(@Parameter(description = "ArticleDto to put", 
+	public ResponseEntity<Long> update(@Parameter(description = "ArticleDto to update", 
 	required = true) 
 	@RequestBody ArticleDto article) {
-		return new ResponseEntity<Long>(articleService.update(article), HttpStatus.OK);
+		try {
+			return new ResponseEntity<Long>(articleService.update(article), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Long>(HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	/**
@@ -130,11 +145,11 @@ public class ArticleController {
 	 * @param articles the list of article (same)
 	 * @return the list of upgraded articles's id
 	 */
-	@Operation(summary = "Put the articles in the database", 
+	@Operation(summary = "Updates the articles in the database", 
 			description = "Receives a list of ArticleDto, checks them and updates or creates an Article "
 					+ "from each valid ArticleDto")
 	@PutMapping("/updateAll")
-	public ResponseEntity<List<Long>> updateAll(@Parameter(description = "List of ArticleDto to post", 
+	public ResponseEntity<List<Long>> updateAll(@Parameter(description = "List of ArticleDto to update", 
 			required = true) 
 	@RequestBody List<ArticleDto> articles) {
 		return new ResponseEntity<List<Long>>(articleService.updateAll(articles), HttpStatus.OK);
@@ -145,13 +160,19 @@ public class ArticleController {
 	 * 
 	 * @param id the article's id 
 	 * @return the deleted article's id
+	 * @throws BadRequestException in case the article is not present in the database
 	 */
-	@Operation(summary = "Delete the article by his id", 
-			description = "If the id is not found in the database it is silentily ignored")
+	@Operation(summary = "Deletes the article by his id", 
+			description = "If the id is not found in the database it is throws and exception")
 	@DeleteMapping("/delete/{id}") 
 	public ResponseEntity<Long> deleteById(@Parameter(description = "ID of the article") 
 	@PathVariable Long id) {
-		return new ResponseEntity<Long>(articleService.deleteById(id), HttpStatus.OK);
+		try {
+			return new ResponseEntity<Long>(articleService.deleteById(id), HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Long>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	/**
@@ -160,8 +181,8 @@ public class ArticleController {
 	 * @param ids the list of the articles's id
 	 * @return the deleted articles's id
 	 */
-	@Operation(summary = "Delete the articles by their id", 
-			description = "Each id not found in the database it is silentily ignored")
+	@Operation(summary = "Deletes the articles by their id", 
+			description = "Each id not found in the database throws and exception")
 	@DeleteMapping("/deleteAll/{ids}") 
 	public ResponseEntity<List<Long>> deleteAllById(@Parameter(description = "IDs of the articles") 
 	@PathVariable List<Long> ids) {

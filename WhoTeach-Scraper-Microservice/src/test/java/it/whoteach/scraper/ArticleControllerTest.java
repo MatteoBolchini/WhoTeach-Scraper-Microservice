@@ -92,9 +92,12 @@ public class ArticleControllerTest {
 		ids.add(article2.getId());
 
 		when(articleService.findAllById(any(List.class))).thenReturn(articles);
-		ResultActions response = mockMvc.perform(get("/api/getAll/{ids}", article1.getId())
+		ResultActions response1 = mockMvc.perform(get("/api/getAll/{ids}", article1.getId())
 				.with(csrf()));
-		response.andDo(print()).andExpect(status().isOk());
+		response1.andDo(print()).andExpect(status().isOk());
+		ResultActions response2 = mockMvc.perform(get("/api/getAll/{ids}", article2.getId())
+				.with(csrf()));
+		response2.andDo(print()).andExpect(status().isOk());
 
 	}
 

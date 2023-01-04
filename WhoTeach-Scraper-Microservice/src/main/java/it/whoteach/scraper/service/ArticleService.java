@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import it.whoteach.scraper.dto.ArticleDto;
+import it.whoteach.scraper.exception.BadRequestException;
 import it.whoteach.scraper.pojo.Article;
 import it.whoteach.scraper.repository.ArticleRepository;
 import lombok.extern.java.Log;
@@ -76,24 +77,26 @@ public class ArticleService {
 	// POST
 	public Long newArticle(ArticleDto article) {
 		if(existsByUrl(article.getUrl())) {
-			log.info(String.format("Exist an Article with this url yet: ", article.getUrl()));
-			return null;
+			throw new BadRequestException(String.format("Cannot POST the Article, this url exists yet [%s]", article.getUrl()));
 		}
+		
 		else {
-			Article a = this.modelMapper.map(article, Article.class);
-			if(a == null) {
-				return null;
+			try {
+				return this.modelMapper.map(article, Article.class).getId();
+			} catch (Exception e) {
+				throw new BadRequestException(String.format("This Url is invalid or null [%s]", article.getUrl()));
 			}
-			return a.getId();
 		}
 	}
 	
 	public List<Long> newArticles(List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();
 		for(ArticleDto a : articles) {
-			Long id = newArticle(a);
-			if(id != null)
-				ids.add(id);
+			try {
+				ids.add(newArticle(a));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}		
 		}
 		
 		return ids;
@@ -101,20 +104,21 @@ public class ArticleService {
 
 	// UPDATE
 	public Long update(ArticleDto article) {
-		Article a = this.modelMapper.map(article, Article.class);
-		if(a == null) {
-			return null;
+		try {
+			return this.modelMapper.map(article, Article.class).getId();
+		} catch (Exception e) {
+			throw new BadRequestException(String.format("This Url is invalid or null [%s]", article.getUrl()));
 		}
-		
-		return a.getId();
 	}
 	
 	public List<Long> updateAll(List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();
 		for(ArticleDto a : articles) {
-			Long id = update(a);
-			if(id != null)
-				ids.add(id);
+			try {
+				ids.add(update(a));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}	
 
 		return ids;
@@ -122,16 +126,26 @@ public class ArticleService {
 	
 	// DELETE
 	public Long deleteById(Long id) {
-		articleRepository.deleteById(id);
-		deleteAlone();
-		return id;
+		Article a = findById(id);
+		try {
+			articleRepository.delete(a);
+			deleteAlone();
+			return id;
+		} catch (Exception e) {
+			throw new BadRequestException(String.format("There is no Article found with given id [%s]", id));
+		}
 	}
 	
 	public List<Long> deleteAllBydId(List<Long> ids) {
 		List<Long> list = new ArrayList<>();
 		for(Long id : ids) {
-			deleteById(id);
+			try {
+				deleteById(id);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+		
 		return list;
 	}		
 

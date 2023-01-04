@@ -96,17 +96,15 @@ public class ModelMapperConfig {
 
 		if(context.getSource().getUrl() == null) {
 			throw new InvalidFieldException("Url cannot be null");
-			//log.log(Level.INFO, "Url cannot be null");
-			//return null;
 		}
+		
 		else {
 			if(articleService.existsByUrl(context.getSource().getUrl()))
 				article = articleService.getByUrl(context.getSource().getUrl());
 			else {
 				// da usare nel caso serva distinguere le source
 				/*if(context.getSource().getSource() == null) {
-					log.log(Level.INFO, "Source cannot be null");
-					return null;
+				 * throw new InvalidFieldException("Source cannot be null");
 				}*/
 				article = new Article();
 				//article.setSource(context.getSource().getSource());
