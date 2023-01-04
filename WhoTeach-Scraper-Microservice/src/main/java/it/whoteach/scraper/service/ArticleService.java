@@ -46,7 +46,6 @@ public class ArticleService {
 		return articleRepository.getByUrl(url);
 	}
 
-	// si può cambiare in maniera tale che richiami findById e nel ritorno ci siano segnati come null, gli articoli non trovati
 	public List<Article> findAllById(List<Long> ids) {
 		List<Article> list = new ArrayList<>();
 		for(Long id : ids) {
@@ -56,6 +55,7 @@ public class ArticleService {
 				log.log(Level.WARNING, String.format("Article with id [%s] not found", id));
 			}
 		}
+		
 		return list;
 	}
 
@@ -77,14 +77,16 @@ public class ArticleService {
 	// POST
 	public Long newArticle(ArticleDto article) {
 		if(existsByUrl(article.getUrl())) {
-			throw new BadRequestException(String.format("Cannot POST the Article, this url exists yet [%s]", article.getUrl()));
+			throw new BadRequestException(String.format("Cannot POST the Article, his url exists yet [%s]", 
+					article.getUrl()));
 		}
 		
 		else {
 			try {
 				return this.modelMapper.map(article, Article.class).getId();
 			} catch (Exception e) {
-				throw new BadRequestException(String.format("This Url is invalid or null [%s]", article.getUrl()));
+				throw new BadRequestException(String.format("Cannot POST the Article, his url is invalid or null [%s]", 
+						article.getUrl()));
 			}
 		}
 	}
@@ -92,11 +94,19 @@ public class ArticleService {
 	public List<Long> newArticles(List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();
 		for(ArticleDto a : articles) {
-			try {
-				ids.add(newArticle(a));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}		
+			if(existsByUrl(a.getUrl())) {
+				log.log(Level.SEVERE, String.format("Cannot POST the Article, his url exists yet [%s]", 
+						a.getUrl()));
+			}
+			
+			else {
+				try {
+					ids.add(this.modelMapper.map(a, Article.class).getId());
+				} catch (Exception e) {
+					log.log(Level.WARNING, String.format("Cannot POST the Article, his url is invalid or null [%s]", 
+							a.getUrl()));
+				}
+			}	
 		}
 		
 		return ids;
@@ -107,7 +117,8 @@ public class ArticleService {
 		try {
 			return this.modelMapper.map(article, Article.class).getId();
 		} catch (Exception e) {
-			throw new BadRequestException(String.format("This Url is invalid or null [%s]", article.getUrl()));
+			throw new BadRequestException(String.format("Cannot PUT the Article, his url is invalid or null [%s]", 
+					article.getUrl()));
 		}
 	}
 	
@@ -115,9 +126,10 @@ public class ArticleService {
 		List<Long> ids = new ArrayList<>();
 		for(ArticleDto a : articles) {
 			try {
-				ids.add(update(a));
+				ids.add(this.modelMapper.map(a, Article.class).getId());
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.log(Level.WARNING, String.format("Cannot PUT the Article, his url is invalid or null [%s]", 
+						a.getUrl()));
 			}
 		}	
 

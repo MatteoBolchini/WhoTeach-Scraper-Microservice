@@ -117,8 +117,6 @@ public class ModelMapperConfig {
 			article.setUrl(context.getSource().getUrl());
 		else {
 			throw new InvalidFieldException("Url is mandatory, this one is invalid: " + context.getSource().getUrl());
-			//log.log(Level.INFO, "Url is mandatory, this one is invalid: " + context.getSource().getUrl());
-			//return null;
 		}
 
 		// Dto to pojo

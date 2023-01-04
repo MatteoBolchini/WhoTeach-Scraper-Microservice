@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import it.whoteach.scraper.service.CsvService;
+import lombok.NonNull;
 
 @RestController
 @RequestMapping("/csv")
@@ -28,15 +29,14 @@ public class CsvController {
 	 * 
 	 * @param fileName The bucket's name
 	 * @return the Http status
+	 * @throws NullPointerException in case fileName is null
 	 */
 	@Operation(summary = "Creates new articles in the database",
 			description = "If one article is invalid (wrong arguments or inserted yet) "
 					+ "it is logged and the operation continues")
 	@PostMapping("/post-bucket/{fileName}")
 	public ResponseEntity<List<Long>> postFromBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
-	@PathVariable String fileName) {
-		if(fileName == null)
-			return new ResponseEntity<List<Long>>(HttpStatus.BAD_REQUEST);
+	@PathVariable @NonNull String fileName) {
 		return new ResponseEntity<List<Long>>(csvService.postFromBucket(fileName), HttpStatus.OK);
 	}
 	
@@ -45,6 +45,7 @@ public class CsvController {
 	 * 
 	 * @param fileName The bucket's name
 	 * @return the Http status
+	 * @throws NullPointerException in case fileName is null
 	 */
 	@Operation(summary = "Creates new articles if their Url is not present in the database yet, "
 			+ "otherwise it updates them.",
@@ -52,18 +53,14 @@ public class CsvController {
 					+ "it is logged and the operation continues")
 	@PutMapping("/put-bucket/{fileName}")
 	public ResponseEntity<List<Long>> putFromBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
-	@PathVariable String fileName) {
-		if(fileName == null)
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	@PathVariable @NonNull String fileName) {
 		return new ResponseEntity<List<Long>>(csvService.putFromBucket(fileName), HttpStatus.OK);
 	}
 	
 	// per test in locale
 	@PostMapping("/post-bucket-local/{fileName}")
 	public ResponseEntity<Void> postFromLocalBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
-	@PathVariable String fileName) throws IllegalStateException, FileNotFoundException {
-		if(fileName == null)
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	@PathVariable @NonNull String fileName) throws IllegalStateException, FileNotFoundException {
 		csvService.postFromBucketLocal(fileName);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
