@@ -49,21 +49,8 @@ public class ArticleService {
 	public Article getByUrl(String url) {
 		return articleRepository.getByUrl(url);
 	}
-
-	public List<Article> findAllById(List<Long> ids) {
-		List<Article> list = new ArrayList<>();
-		for(Long id : ids) {
-			try {
-				list.add(findById(id));
-			} catch (Exception e) {
-				log.log(Level.WARNING, String.format("Article with id [%s] not found", id));
-			}
-		}
-		
-		return list;
-	}
 	
-	public ResponseGet findAllById2(List<Long> ids) {
+	public ResponseGet findAllById(List<Long> ids) {
 		List<Article> list = new ArrayList<>();
 		int c = 0;
 		for(Long id : ids) {
@@ -110,28 +97,7 @@ public class ArticleService {
 		}
 	}
 	
-	public List<Long> newArticles(List<ArticleDto> articles) {
-		List<Long> ids = new ArrayList<>();
-		for(ArticleDto a : articles) {
-			if(existsByUrl(a.getUrl())) {
-				log.log(Level.SEVERE, String.format("Cannot POST the Article, his url exists yet [%s]", 
-						a.getUrl()));
-			}
-			
-			else {
-				try {
-					ids.add(this.modelMapper.map(a, Article.class).getId());
-				} catch (Exception e) {
-					log.log(Level.WARNING, String.format("Cannot POST the Article, his url is invalid or null [%s]", 
-							a.getUrl()));
-				}
-			}	
-		}
-		
-		return ids;
-	}
-	
-	public ResponsePost newArticles2(List<ArticleDto> articles) {
+	public ResponsePost newArticles(List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();
 		int c = 0;
 		for(ArticleDto a : articles) {
@@ -165,21 +131,7 @@ public class ArticleService {
 		}
 	}
 	
-	public List<Long> updateAll(List<ArticleDto> articles) {
-		List<Long> ids = new ArrayList<>();
-		for(ArticleDto a : articles) {
-			try {
-				ids.add(this.modelMapper.map(a, Article.class).getId());
-			} catch (Exception e) {
-				log.log(Level.WARNING, String.format("Cannot PUT the Article, his url is invalid or null [%s]", 
-						a.getUrl()));
-			}
-		}	
-
-		return ids;
-	}
-	
-	public ResponsePut updateAll2(List<ArticleDto> articles) {
+	public ResponsePut updateAll(List<ArticleDto> articles) {
 		List<Long> ids = new ArrayList<>();
 		int c = 0;
 		for(ArticleDto a : articles) {
@@ -205,25 +157,9 @@ public class ArticleService {
 		} catch (Exception e) {
 			throw new BadRequestException(String.format("There is no Article found with given id [%s]", id));
 		}
-	}
-	
-	public List<Long> deleteAllBydId(List<Long> ids) {
-		List<Long> list = new ArrayList<>();
-		for(Long id : ids) {
-			try {
-				Article a = findById(id);
-				list.add(id);
-				articleRepository.delete(a);
-				deleteAlone();
-			} catch (Exception e) {
-				log.log(Level.WARNING, String.format("Article with id [%s] not found", id));
-			}
-		}
-		
-		return list;
 	}		
 	
-	public ResponseDelete deleteAllBydId2(List<Long> ids) {
+	public ResponseDelete deleteAllById(List<Long> ids) {
 		List<Long> list = new ArrayList<>();
 		int c = 0;
 		for(Long id : ids) {

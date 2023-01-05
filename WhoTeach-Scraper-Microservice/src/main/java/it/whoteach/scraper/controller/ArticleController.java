@@ -43,7 +43,7 @@ public class ArticleController {
 	 * @return the list of all articles
 	 */
 	@Operation(summary = "Get the list of all articles in the database")	
-			@GetMapping("/articles")
+			@GetMapping("/all")
 	public ResponseEntity<List<Article>> all() {
 		return new ResponseEntity<List<Article>>(articleService.findAll(), HttpStatus.OK);
 	}
@@ -58,7 +58,7 @@ public class ArticleController {
 	 */
 	@Operation(summary = "Gets the article specified by the id given",
 			description = "If the id is not found in the database it is logged")
-	@GetMapping("/get/{id}")
+	@GetMapping("/article/{id}")
 	public ResponseEntity<Article> getById(@Parameter(description = "ID of the article", 
 	required = true) 
 	@PathVariable @NonNull Long id) {
@@ -79,27 +79,11 @@ public class ArticleController {
 	 */
 	@Operation(summary = "Gets the list of articles specified by their id",
 			description = "If the id is not found in the database it is logged")
-	@GetMapping("/getAll/{ids}") 
-	public ResponseEntity<List<Article>> allById(@Parameter(description = "IDs of the articles", 
+	@GetMapping("/articles/{ids}") 
+	public ResponseEntity<ResponseGet> getAllById(@Parameter(description = "IDs of the articles", 
 	required = true)
 	@PathVariable @NonNull List<Long> ids) {
-			return new ResponseEntity<List<Article>>(articleService.findAllById(ids), HttpStatus.OK);	
-	}
-	
-	/**
-	 * Gets all articles by their id
-	 * 
-	 * @param ids the list of the articles's id
-	 * @return the list of articles specified by their id
-	 * @throws NullPointerException in case the given list is null
-	 */
-	@Operation(summary = "Gets the list of articles specified by their id",
-			description = "If the id is not found in the database it is logged")
-	@GetMapping("/getAll2/{ids}") 
-	public ResponseEntity<ResponseGet> allById2(@Parameter(description = "IDs of the articles", 
-	required = true)
-	@PathVariable @NonNull List<Long> ids) {
-			return new ResponseEntity<ResponseGet>(articleService.findAllById2(ids), HttpStatus.OK);	
+			return new ResponseEntity<ResponseGet>(articleService.findAllById(ids), HttpStatus.OK);	
 	}
 
 	/**
@@ -125,23 +109,6 @@ public class ArticleController {
 		}
 		
 	}
-
-	/**
-	 * Creates all articles in the database
-	 * 
-	 * @param articles the list of articles to be added to the database
-	 * @return the list of added article's id
-	 * @throws NullPointerException in case the given list is null
-	 */
-	@Operation(summary = "Creates the articles in the database", 
-			description = "Receives a list of ArticleDto, checks them and creates an Article "
-					+ "from each valid ArticleDto")
-	@PostMapping("/articles")
-	public ResponseEntity<List<Long>> newArticles(@Parameter(description = "List of ArticleDto to create", 
-	required = true) 
-	@RequestBody @NonNull List<ArticleDto> articles) {
-			return new ResponseEntity<List<Long>>(articleService.newArticles(articles), HttpStatus.OK);
-	}
 	
 	/**
 	 * Creates all articles in the database
@@ -153,11 +120,11 @@ public class ArticleController {
 	@Operation(summary = "Creates the articles in the database", 
 			description = "Receives a list of ArticleDto, checks them and creates an Article "
 					+ "from each valid ArticleDto")
-	@PostMapping("/articles2")
-	public ResponseEntity<ResponsePost> newArticles2(@Parameter(description = "List of ArticleDto to create", 
+	@PostMapping("/articles")
+	public ResponseEntity<ResponsePost> newArticles(@Parameter(description = "List of ArticleDto to create", 
 	required = true) 
 	@RequestBody @NonNull List<ArticleDto> articles) {
-			return new ResponseEntity<ResponsePost>(articleService.newArticles2(articles), HttpStatus.OK);
+			return new ResponseEntity<ResponsePost>(articleService.newArticles(articles), HttpStatus.OK);
 	}
 
 	/**
@@ -171,7 +138,7 @@ public class ArticleController {
 	
 	@Operation(summary = "Updates the article in the database", 
 			description = "Receives an ArticleDto, checks it and updates or creates an Article")
-	@PutMapping("/update")
+	@PutMapping("/article")
 	public ResponseEntity<Long> update(@Parameter(description = "ArticleDto to update", 
 	required = true) 
 	@RequestBody @NonNull ArticleDto article) {
@@ -181,23 +148,6 @@ public class ArticleController {
 			e.printStackTrace();
 			return new ResponseEntity<Long>(HttpStatus.BAD_REQUEST);
 		}
-	}
-
-	/**
-	 * Updates all articles in the database
-	 * 
-	 * @param articles the list of article (same)
-	 * @return the list of upgraded articles's id
-	 * @throws NullPointerException in case the given list is null
-	 */
-	@Operation(summary = "Updates the articles in the database", 
-			description = "Receives a list of ArticleDto, checks them and updates or creates an Article "
-					+ "from each valid ArticleDto")
-	@PutMapping("/updateAll")
-	public ResponseEntity<List<Long>> updateAll(@Parameter(description = "List of ArticleDto to update", 
-			required = true) 
-	@RequestBody @NonNull List<ArticleDto> articles) {
-		return new ResponseEntity<List<Long>>(articleService.updateAll(articles), HttpStatus.OK);
 	}
 	
 	/**
@@ -210,11 +160,11 @@ public class ArticleController {
 	@Operation(summary = "Updates the articles in the database", 
 			description = "Receives a list of ArticleDto, checks them and updates or creates an Article "
 					+ "from each valid ArticleDto")
-	@PutMapping("/updateAll2")
-	public ResponseEntity<ResponsePut> updateAll2(@Parameter(description = "List of ArticleDto to update", 
+	@PutMapping("/articles")
+	public ResponseEntity<ResponsePut> updateAll(@Parameter(description = "List of ArticleDto to update", 
 			required = true) 
 	@RequestBody @NonNull List<ArticleDto> articles) {
-		return new ResponseEntity<ResponsePut>(articleService.updateAll2(articles), HttpStatus.OK);
+		return new ResponseEntity<ResponsePut>(articleService.updateAll(articles), HttpStatus.OK);
 	}
 
 	/**
@@ -227,7 +177,7 @@ public class ArticleController {
 	 */
 	@Operation(summary = "Deletes the article by his id", 
 			description = "If the id is not found in the database it is throws and exception")
-	@DeleteMapping("/delete/{id}") 
+	@DeleteMapping("/article/{id}") 
 	public ResponseEntity<Long> deleteById(@Parameter(description = "ID of the article") 
 	@PathVariable @NonNull Long id) {
 		try {
@@ -247,25 +197,10 @@ public class ArticleController {
 	 */
 	@Operation(summary = "Deletes the articles by their id", 
 			description = "Each id not found in the database throws and exception")
-	@DeleteMapping("/deleteAll/{ids}") 
-	public ResponseEntity<List<Long>> deleteAllById(@Parameter(description = "IDs of the articles") 
+	@DeleteMapping("/articles/{ids}") 
+	public ResponseEntity<ResponseDelete> deleteAllById(@Parameter(description = "IDs of the articles") 
 	@PathVariable @NonNull List<Long> ids) {
-		return new ResponseEntity<List<Long>>(articleService.deleteAllBydId(ids), HttpStatus.OK);
-	}
-	
-	/**
-	 * Deletes the articles by their id
-	 * 
-	 * @param ids the list of the articles's id
-	 * @return the deleted articles's id
-	 * @throws NullPointerException in case the given list is null
-	 */
-	@Operation(summary = "Deletes the articles by their id", 
-			description = "Each id not found in the database throws and exception")
-	@DeleteMapping("/deleteAll2/{ids}") 
-	public ResponseEntity<ResponseDelete> deleteAllById2(@Parameter(description = "IDs of the articles") 
-	@PathVariable @NonNull List<Long> ids) {
-		return new ResponseEntity<ResponseDelete>(articleService.deleteAllBydId2(ids), HttpStatus.OK);
+		return new ResponseEntity<ResponseDelete>(articleService.deleteAllById(ids), HttpStatus.OK);
 	}
 
 }

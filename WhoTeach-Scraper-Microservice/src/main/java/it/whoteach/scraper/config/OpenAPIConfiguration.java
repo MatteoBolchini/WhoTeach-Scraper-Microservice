@@ -20,7 +20,7 @@ public class OpenAPIConfiguration {
                 .addServersItem(new Server().url(url))
                 .info(new Info()
                         .title("WhoTeach Scraper Microservice")
-                        .description("Those are REST API to interrogate a Neo4j Aura DB")
+                        .description("REST API to interrogate a Neo4j Aura DB")
                         .version("0.0.1"));
     }
     

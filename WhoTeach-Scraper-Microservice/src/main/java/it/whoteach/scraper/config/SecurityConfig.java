@@ -1,5 +1,6 @@
 package it.whoteach.scraper.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +12,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+	
+	@Value("${whoteach.cloudstorage.url}")
+	private String url;
 	
 	@Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {

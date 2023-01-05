@@ -1,8 +1,5 @@
 package it.whoteach.scraper.controller;
 
-import java.io.FileNotFoundException;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,26 +33,10 @@ public class CsvController {
 	@Operation(summary = "Creates new articles in the database",
 			description = "If one article is invalid (wrong arguments or inserted yet) "
 					+ "it is logged and the operation continues")
-	@PostMapping("/post-bucket/{fileName}")
-	public ResponseEntity<List<Long>> postFromBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
+	@PostMapping("/post-from-bucket/{fileName}")
+	public ResponseEntity<ResponsePost> postFromBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
 	@PathVariable @NonNull String fileName) {
-		return new ResponseEntity<List<Long>>(csvService.postFromBucket(fileName), HttpStatus.OK);
-	}
-	
-	/**
-	 * insert the articles from the csv file to the database
-	 * 
-	 * @param fileName The bucket's name
-	 * @return the Http status
-	 * @throws NullPointerException in case fileName is null
-	 */
-	@Operation(summary = "Creates new articles in the database",
-			description = "If one article is invalid (wrong arguments or inserted yet) "
-					+ "it is logged and the operation continues")
-	@PostMapping("/post-bucket2/{fileName}")
-	public ResponseEntity<ResponsePost> postFromBucket2(@Parameter(description = "Name of the csv file in the bucket", required = true) 
-	@PathVariable @NonNull String fileName) {
-		return new ResponseEntity<ResponsePost>(csvService.postFromBucket2(fileName), HttpStatus.OK);
+		return new ResponseEntity<ResponsePost>(csvService.postFromBucket(fileName), HttpStatus.OK);
 	}
 	
 	/**
@@ -69,35 +50,10 @@ public class CsvController {
 			+ "otherwise it updates them.",
 			description = "If one article is invalid (wrong arguments), "
 					+ "it is logged and the operation continues")
-	@PutMapping("/put-bucket/{fileName}")
-	public ResponseEntity<List<Long>> putFromBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
+	@PutMapping("/put-from-bucket/{fileName}")
+	public ResponseEntity<ResponsePut> putFromBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
 	@PathVariable @NonNull String fileName) {
-		return new ResponseEntity<List<Long>>(csvService.putFromBucket(fileName), HttpStatus.OK);
-	}
-	
-	/**
-	 * update the articles from the csv file to the database
-	 * 
-	 * @param fileName The bucket's name
-	 * @return the Http status
-	 * @throws NullPointerException in case fileName is null
-	 */
-	@Operation(summary = "Creates new articles if their Url is not present in the database yet, "
-			+ "otherwise it updates them.",
-			description = "If one article is invalid (wrong arguments), "
-					+ "it is logged and the operation continues")
-	@PutMapping("/put-bucket2/{fileName}")
-	public ResponseEntity<ResponsePut> putFromBucket2(@Parameter(description = "Name of the csv file in the bucket", required = true) 
-	@PathVariable @NonNull String fileName) {
-		return new ResponseEntity<ResponsePut>(csvService.putFromBucket2(fileName), HttpStatus.OK);
-	}
-	
-	// per test in locale
-	@PostMapping("/post-bucket-local/{fileName}")
-	public ResponseEntity<Void> postFromLocalBucket(@Parameter(description = "Name of the csv file in the bucket", required = true) 
-	@PathVariable @NonNull String fileName) throws IllegalStateException, FileNotFoundException {
-		csvService.postFromBucketLocal(fileName);
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<ResponsePut>(csvService.putFromBucket(fileName), HttpStatus.OK);
 	}
 	
 }
